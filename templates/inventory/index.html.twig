@@ -1,0 +1,37 @@
+{# templates/inventory/index.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block title %}Mi Inventario{% endblock %}
+
+{% block body %}
+<div class="container mx-auto px-6 py-12">
+    <div class="flex justify-between items-end mb-8 border-b border-aurora-border pb-4">
+        <h2 class="text-3xl font-bold text-white flex items-center gap-3">
+            <i class="fa-solid fa-box-open text-aurora-gold"></i> Tu Inventario
+        </h2>
+        <div class="text-aurora-gold font-mono">Valor Total: 0€</div>
+    </div>
+
+    <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6">
+        {% for skin in skins %}
+            {% set border_color = skin.rarity == 'gold' ? '#FFD700' : (skin.rarity == 'red' ? '#eb4b4b' : '#4b69ff') %}
+            
+            <div class="bg-aurora-card p-4 rounded-lg border border-aurora-border gold-glow transition-all cursor-pointer group relative overflow-hidden"
+                 style="border-bottom: 3px solid {{ border_color }};">
+                
+                <div class="absolute top-2 right-2 text-xs text-gray-500">FN</div>
+                
+                <img src="{{ skin.image|default('https://placehold.co/200x150/1a1a1a/FFF?text=Skin') }}" 
+                     alt="{{ skin.name }}" 
+                     class="w-full h-32 object-contain mb-4 transform group-hover:scale-110 transition-transform duration-300">
+                
+                <h3 class="text-white text-sm font-bold truncate">{{ skin.name }}</h3>
+                
+                <div class="flex justify-between items-center mt-2">
+                    <span class="text-aurora-gold font-mono font-bold">{{ skin.price }}€</span>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
