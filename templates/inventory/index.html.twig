@@ -32,7 +32,7 @@
 {% block body %}
 <div class="inventory-dashboard">
     <div>
-        <strong>Usuario:</strong> {{ steamUser }} | 
+        <strong>Usuario:</strong> {{ app.user }} | 
         <a href="{{ path('auth_logout') }}" class="text-danger">Desconectar</a>
     </div>
     <div>

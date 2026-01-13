@@ -1,0 +1,29 @@
+<?php //easyadmin.routes.fqcn_to_route
+
+return [PHP_INT_MAX, [
+    'App\\Controller\\Admin\\DashboardController' => [
+        '' => [
+            '' => 'admin',
+        ],
+        'App\\Controller\\Admin\\ServerCrudController' => [
+            'index' => 'admin_server_index',
+            'new' => 'admin_server_new',
+            'batchDelete' => 'admin_server_batch_delete',
+            'autocomplete' => 'admin_server_autocomplete',
+            'renderFilters' => 'admin_server_render_filters',
+            'edit' => 'admin_server_edit',
+            'delete' => 'admin_server_delete',
+            'detail' => 'admin_server_detail',
+        ],
+        'App\\Controller\\Admin\\SkinCrudController' => [
+            'index' => 'admin_skin_index',
+            'new' => 'admin_skin_new',
+            'batchDelete' => 'admin_skin_batch_delete',
+            'autocomplete' => 'admin_skin_autocomplete',
+            'renderFilters' => 'admin_skin_render_filters',
+            'edit' => 'admin_skin_edit',
+            'delete' => 'admin_skin_delete',
+            'detail' => 'admin_skin_detail',
+        ],
+    ],
+]];
