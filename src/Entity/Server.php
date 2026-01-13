@@ -31,6 +31,9 @@ class Server
     #[ORM\Column(length: 50)]
     private ?string $ipAdress = null;
 
+    #[ORM\Column]
+    private ?int $port = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -104,6 +107,18 @@ class Server
     public function setIpAdress(string $ipAdress): static
     {
         $this->ipAdress = $ipAdress;
+
+        return $this;
+    }
+
+    public function getPort(): ?int
+    {
+        return $this->port;
+    }
+
+    public function setPort(int $port): static
+    {
+        $this->port = $port;
 
         return $this;
     }

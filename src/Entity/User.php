@@ -49,6 +49,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\ManyToMany(targetEntity: Post::class, mappedBy: 'savedBy')]
     private Collection $savedPosts;
 
+    #[ORM\Column(length: 255)]
+    private ?string $steamUser = null;
+
     public function __construct()
     {
         $this->posts = new ArrayCollection();
@@ -164,6 +167,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         if ($this->savedPosts->removeElement($savedPost)) {
             $savedPost->removeSavedBy($this);
         }
+
+        return $this;
+    }
+
+    public function getSteamUser(): ?string
+    {
+        return $this->steamUser;
+    }
+
+    public function setSteamUser(string $steamUser): static
+    {
+        $this->steamUser = $steamUser;
 
         return $this;
     }

@@ -1,52 +1,161 @@
-{# templates/server/index.html.twig #}
 {% extends 'base.html.twig' %}
 
-{% block title %}Lista de Servidores{% endblock %}
+{% block title %}Server Browser | Aurora.gg{% endblock %}
 
 {% block body %}
-<div class="container mx-auto px-6 py-12">
-    <div class="flex justify-between items-end mb-8 border-b border-aurora-border pb-4">
-        <h2 class="text-3xl font-bold text-white flex items-center gap-3">
-            <i class="fa-solid fa-server text-aurora-gold"></i> Servidores Activos
-        </h2>
-    </div>
+<div class="min-h-screen bg-black py-10 text-gray-300">
+    <div class="container mx-auto px-4 md:px-6">
+        
+        <div class="flex justify-between items-end mb-8 border-b border-white/10 pb-6">
+            <div>
+                <h1 class="text-3xl font-black text-white mb-1 uppercase tracking-wider">Server <span class="text-aurora-gold">Browser</span></h1>
+                <p class="text-gray-500 text-sm font-mono">Estado en tiempo real</p>
+            </div>
+            
+            {% if is_granted('ROLE_ADMIN') %}
+                <a href="{{ path('app_server_new') }}" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded font-bold text-xs uppercase flex items-center gap-2">
+                    <i class="fa-solid fa-lock"></i> Zona Admin
+                </a>
+            {% endif %}
+        </div>
 
-    <div class="overflow-x-auto bg-aurora-card rounded-lg border border-aurora-border shadow-xl">
-        <table class="w-full text-left">
-            <thead class="bg-black/40 text-gray-400 uppercase text-xs">
-                <tr>
-                    <th class="p-4">Estado</th>
-                    <th class="p-4">Servidor</th>
-                    <th class="p-4">Mapa</th>
-                    <th class="p-4">Jugadores</th>
-                    <th class="p-4">Ping</th>
-                    <th class="p-4 text-right">Acción</th>
-                </tr>
-            </thead>
-            <tbody class="divide-y divide-aurora-border text-sm">
-                {% for server in servers %}
-                <tr class="hover:bg-white/5 transition-colors">
-                    <td class="p-4">
-                        <div class="flex items-center gap-2">
-                            <div class="w-2 h-2 rounded-full bg-aurora-neon shadow-[0_0_10px_#39FF14]"></div> 
-                            <span class="text-aurora-neon text-xs">ONLINE</span>
+        <div class="flex flex-col gap-4">
+            
+            <div class="hidden md:grid grid-cols-12 gap-4 px-6 text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">
+                <div class="col-span-5">Servidor</div>
+                <div class="col-span-3">Mapa</div>
+                <div class="col-span-2">Estado</div>
+                <div class="col-span-1 text-center">Ping</div>
+                <div class="col-span-1 text-right"></div>
+            </div>
+
+            {% for server in servers %}
+                <div id="server-card-{{ server.id }}" class="group bg-zinc-900/40 border border-white/5 rounded-lg p-4 md:p-0 md:h-20 grid grid-cols-1 md:grid-cols-12 gap-4 items-center relative overflow-hidden transition-all duration-500">
+                    
+                    <div id="status-line-{{ server.id }}" class="absolute left-0 top-0 bottom-0 w-1 bg-gray-600"></div>
+
+                    <div class="col-span-5 md:pl-6">
+                        <h3 class="text-white font-bold text-lg leading-tight">{{ server.name }}</h3>
+                        <div class="flex items-center gap-2 mt-1">
+                            <code class="text-xs text-zinc-500 font-mono bg-black/30 px-2 py-0.5 rounded cursor-pointer hover:text-white transition-colors" onclick="copyIp('{{ server.ipAdress }}:{{ server.port ?? 27015 }}')">
+                                {{ server.ipAdress }}:{{ server.port ?? 27015 }}
+                            </code>
                         </div>
-                    </td>
-                    <td class="p-4 font-bold text-white">{{ server.name }}</td>
-                    <td class="p-4 text-gray-400">{{ server.map }}</td>
-                    <td class="p-4 text-gray-400">{{ server.players }}/{{ server.max_players }}</td>
-                    <td class="p-4 text-aurora-gold font-mono">{{ server.ping }} ms</td>
-                    <td class="p-4 text-right">
-                        <button class="border border-aurora-gold text-aurora-gold text-xs px-4 py-1 rounded hover:bg-aurora-gold hover:text-black transition-all">
-                            CONECTAR
-                        </button>
-                    </td>
-                </tr>
-                {% else %}
-                    <tr><td colspan="6" class="p-4 text-center">No hay servidores disponibles.</td></tr>
-                {% endfor %}
-            </tbody>
-        </table>
+                    </div>
+
+                    <div class="col-span-3 flex items-center gap-2 text-sm text-gray-400">
+                        <i class="fa-solid fa-map text-zinc-700"></i>
+                        <span id="map-{{ server.id }}" class="italic text-zinc-600">Conectando...</span>
+                    </div>
+
+                    <div class="col-span-2">
+                        <div class="flex justify-between text-xs font-bold mb-1">
+                            <span id="players-text-{{ server.id }}" class="text-zinc-500">--/--</span>
+                        </div>
+                        <div class="w-full h-1.5 bg-black rounded-full overflow-hidden">
+                            <div id="players-bar-{{ server.id }}" class="h-full bg-zinc-700 w-0 transition-all duration-1000"></div>
+                        </div>
+                    </div>
+
+                    <div class="col-span-1 text-center">
+                        <div class="flex flex-col items-center">
+                            <i id="ping-icon-{{ server.id }}" class="fa-solid fa-signal text-zinc-700 text-xs mb-1"></i>
+                            <span id="ping-text-{{ server.id }}" class="text-xs font-mono font-bold text-zinc-700">...</span>
+                        </div>
+                    </div>
+                    <a href="steam://connect/{{ server.ipAdress }}:{{ server.port }}" 
+                    class="group flex h-9 w-9 items-center justify-center rounded-full border border-white/20 bg-transparent text-white transition-all duration-300 hover:border-yellow-500 hover:text-yellow-500 hover:shadow-[0_0_10px_rgba(234,179,8,0.2)] hover:scale-110">
+                        <i class="fa-solid fa-play pl-0.5 text-xs"></i>
+                    </a>
+
+                    <div class="col-span-1 flex justify-end gap-3 md:pr-6 z-10">
+                        {% if is_granted('ROLE_ADMIN') %}
+                            <a href="{{ path('app_server_edit', {id: server.id}) }}" class="text-zinc-600 hover:text-white"><i class="fa-solid fa-pen"></i></a>
+                            <a href="{{ path('app_server_delete', {id: server.id}) }}" class="text-zinc-600 hover:text-red-500" onclick="return confirm('¿Borrar?')"><i class="fa-solid fa-trash"></i></a>
+                        {% endif %}
+                         <button onclick="copyIp('{{ server.ipAdress }}:{{ server.port ?? 27015 }}')" class="text-zinc-500 hover:text-aurora-gold md:hidden"><i class="fa-regular fa-copy"></i></button>
+                    </div>
+                </div>
+
+                <script>
+                    document.addEventListener('DOMContentLoaded', () => {
+                        fetchServerStatus({{ server.id }});
+                    });
+                </script>
+            {% else %}
+                <div class="text-center py-12 border border-dashed border-zinc-800 rounded text-zinc-600">
+                    No hay servidores configurados.
+                </div>
+            {% endfor %}
+        </div>
     </div>
 </div>
+
+<script>
+    function copyIp(ip) {
+        navigator.clipboard.writeText(ip);
+        alert('IP Copiada: ' + ip);
+    }
+
+    function fetchServerStatus(id) {
+        // Llamamos a nuestra API interna de Symfony
+        fetch(`/servers/api/status/${id}`)
+            .then(response => response.json())
+            .then(data => {
+                const mapEl = document.getElementById(`map-${id}`);
+                const playersTextEl = document.getElementById(`players-text-${id}`);
+                const playersBarEl = document.getElementById(`players-bar-${id}`);
+                const pingTextEl = document.getElementById(`ping-text-${id}`);
+                const pingIconEl = document.getElementById(`ping-icon-${id}`);
+                const statusLine = document.getElementById(`status-line-${id}`);
+                const card = document.getElementById(`server-card-${id}`);
+
+                if (data.online) {
+                    // SI ESTÁ ONLINE
+                    statusLine.classList.replace('bg-gray-600', 'bg-green-500');
+                    card.classList.add('hover:border-green-500/50');
+                    
+                    // Mapa
+                    mapEl.innerText = data.map;
+                    mapEl.classList.remove('italic', 'text-zinc-600');
+                    mapEl.classList.add('text-white');
+
+                    // Jugadores
+                    playersTextEl.innerHTML = `<span class="text-white">${data.players}</span> <span class="text-zinc-500">/ ${data.max_players}</span>`;
+                    
+                    // Barra de progreso
+                    const percentage = (data.players / data.max_players) * 100;
+                    playersBarEl.style.width = `${percentage}%`;
+                    playersBarEl.classList.replace('bg-zinc-700', 'bg-gradient-to-r');
+                    playersBarEl.classList.add('from-green-500', 'to-green-400');
+
+                    // Ping
+                    pingTextEl.innerText = data.ping + 'ms';
+                    pingIconEl.classList.remove('text-zinc-700');
+                    pingTextEl.classList.remove('text-zinc-700');
+                    
+                    if(data.ping < 50) {
+                        pingIconEl.classList.add('text-green-500');
+                        pingTextEl.classList.add('text-green-500');
+                    } else if(data.ping < 100) {
+                        pingIconEl.classList.add('text-yellow-500');
+                        pingTextEl.classList.add('text-yellow-500');
+                    } else {
+                        pingIconEl.classList.add('text-red-500');
+                        pingTextEl.classList.add('text-red-500');
+                    }
+
+                } else {
+                    // SI ESTÁ OFFLINE
+                    statusLine.classList.replace('bg-gray-600', 'bg-red-600');
+                    mapEl.innerText = "Offline";
+                    mapEl.classList.add('text-red-500');
+                    playersTextEl.innerText = "0 / 0";
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching server status:', error);
+            });
+    }
+</script>
 {% endblock %}
