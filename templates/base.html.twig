@@ -1,0 +1,106 @@
+{# templates/base.html.twig #}
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <title>{% block title %}Welcome!{% endblock %}</title>
+        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text></svg>">
+        
+        <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+        <script src="https://cdn.tailwindcss.com"></script>
+        
+        <script>
+            tailwind.config = {
+                theme: {
+                    extend: {
+                        colors: {
+                            aurora: { bg: '#0A0A0A', card: '#121212', border: '#2A2A2A', gold: '#FFD700', neon: '#39FF14' }
+                        },
+                        fontFamily: { sans: ['Montserrat', 'sans-serif'] }
+                    }
+                }
+            }
+        document.addEventListener('DOMContentLoaded', function() {
+            
+            // LOGICA LIKE
+            document.querySelectorAll('.js-like-btn').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const icon = this.querySelector('i');
+                    const countSpan = this.querySelector('.js-likes-count'); // Buscar dentro o al lado
+                    const parentContainer = this.parentElement; 
+                    const displayCount = countSpan || parentContainer.querySelector('.js-likes-count');
+
+                    fetch(this.href)
+                        .then(response => {
+                            if (response.status === 403) window.location.href = '/login';
+                            return response.json();
+                        })
+                        .then(data => {
+                            if (data.liked) {
+                                this.classList.add('text-aurora-gold');
+                                this.classList.remove('text-gray-500', 'text-gray-600');
+                                icon.style.transform = "scale(1.2)";
+                                setTimeout(() => icon.style.transform = "scale(1)", 200);
+                            } else {
+                                this.classList.remove('text-aurora-gold');
+                                this.classList.add('text-gray-500');
+                            }
+                            if (displayCount) displayCount.innerText = data.count;
+                        });
+                });
+            });
+
+            // LOGICA GUARDAR
+            document.querySelectorAll('.js-save-btn').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation(); // Evitar abrir el post si estamos en index
+                    const icon = this.querySelector('i');
+
+                    fetch(this.href)
+                        .then(response => {
+                            if (response.status === 403) window.location.href = '/login';
+                            return response.json();
+                        })
+                        .then(data => {
+                            if (data.saved) {
+                                this.classList.add('text-aurora-gold');
+                                this.classList.remove('text-gray-500', 'hover:text-white');
+                                icon.classList.remove('fa-regular');
+                                icon.classList.add('fa-solid');
+                            } else {
+                                this.classList.remove('text-aurora-gold');
+                                this.classList.add('text-gray-500');
+                                icon.classList.remove('fa-solid');
+                                icon.classList.add('fa-regular');
+                            }
+                        });
+                });
+            });
+        });
+    </script>
+    
+
+        {% block stylesheets %}
+        {% endblock %}
+
+        {% block javascripts %}
+        {% endblock %}
+    </head>
+    
+    <body class="flex flex-col min-h-screen bg-aurora-bg text-gray-200">
+        
+        {% include 'components/_navbar.html.twig' %}
+
+        <main class="pt-24 flex-grow">
+            {% block body %}{% endblock %}
+        </main>
+
+        <footer class="bg-aurora-card border-t border-aurora-border mt-12 py-8 text-center text-xs text-gray-600">
+            Aurora.gg &copy; {{ "now"|date("Y") }} - CS2 Community
+        </footer>
+        
+    </body>
+</html>

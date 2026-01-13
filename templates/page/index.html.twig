@@ -1,0 +1,21 @@
+{# templates/home/index.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block title %}Inicio | Aurora.gg{% endblock %}
+
+{% block body %}
+    <section class="relative min-h-[80vh] flex items-center justify-center text-center bg-[url('https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=2070')] bg-cover bg-center">
+        <div class="absolute inset-0 bg-gradient-to-t from-aurora-bg via-aurora-bg/90 to-aurora-bg/60"></div>
+        
+        <div class="relative z-10 max-w-4xl mx-auto px-4">
+            <h1 class="text-5xl md:text-7xl font-bold mb-6 text-white">DOMINA EL <span class="text-transparent bg-clip-text bg-gradient-to-r from-aurora-gold to-yellow-600">JUEGO</span></h1>
+            <p class="text-xl text-gray-400 mb-8 max-w-2xl mx-auto">Únete a la mejor comunidad de CS2. Gestiona tus skins y servidores en Aurora.gg.</p>
+            
+            <div class="flex gap-4 justify-center">
+                <a href="{{ path('app_servers') }}" class="bg-aurora-gold text-black font-bold px-8 py-3 rounded hover:bg-yellow-400 transition-transform hover:-translate-y-1">
+                    JUGAR AHORA
+                </a>
+            </div>
+        </div>
+    </section>
+{% endblock %}
