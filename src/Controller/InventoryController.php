@@ -83,12 +83,10 @@ class InventoryController extends AbstractController
         return $this->render('inventory/index.html.twig', [
             'items' => $userItems,
             
-            // CAMBIA LA CLAVE DE LA IZQUIERDA PARA QUE SEA 'steamUser'
             'steamUser' => $session->get('steam_persona', 'Invitado') 
         ]);
     }
 
-    // --- LÓGICA DE LOGIN (OPENID MANUAL) ---
 
     #[Route('/auth/steam', name: 'auth_steam')]
     public function login(): Response
