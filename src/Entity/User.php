@@ -11,6 +11,7 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
+#[ORM\Table(name: 'app_user')]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
 #[UniqueEntity(fields: ['email'], message: 'There is already an account with this email')]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
@@ -35,22 +36,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?string $password = null;
 
-    // --- CORRECCIÓN 1: ESTO SON LOS POSTS CREADOS POR EL USUARIO ---
     /**
      * @var Collection<int, Post>
      */
     #[ORM\OneToMany(targetEntity: Post::class, mappedBy: 'author', orphanRemoval: true)]
     private Collection $posts;
 
-    // --- CORRECCIÓN 2: AÑADIDO POSTS GUARDADOS (FAVORITOS) ---
     /**
      * @var Collection<int, Post>
      */
     #[ORM\ManyToMany(targetEntity: Post::class, mappedBy: 'savedBy')]
     private Collection $savedPosts;
 
-    #[ORM\Column(length: 255)]
-    private ?string $steamUser = null;
 
     public function __construct()
     {
@@ -167,18 +164,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         if ($this->savedPosts->removeElement($savedPost)) {
             $savedPost->removeSavedBy($this);
         }
-
-        return $this;
-    }
-
-    public function getSteamUser(): ?string
-    {
-        return $this->steamUser;
-    }
-
-    public function setSteamUser(string $steamUser): static
-    {
-        $this->steamUser = $steamUser;
 
         return $this;
     }

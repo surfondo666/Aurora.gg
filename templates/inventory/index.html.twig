@@ -1,73 +1,60 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Inventario Funcional{% endblock %}
+{% block title %}Inventario{% endblock %}
 
-{% block stylesheets %}
-<style>
-    .inventory-dashboard {
-        position: sticky; top: 0; z-index: 1000;
-        background: #1e1e1e; color: white; padding: 15px;
-        border-bottom: 3px solid #0d6efd;
-        display: flex; justify-content: space-between; align-items: center;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-    }
-    .skin-card {
-        cursor: pointer; transition: transform 0.2s, border 0.2s;
-        border: 2px solid transparent; background: #2b2b2b; color: #fff;
-    }
-    .skin-card:hover { transform: translateY(-5px); }
-    
-    /* Clase que añade JS cuando seleccionas */
-    .skin-card.selected {
-        border-color: #28a745; /* Verde */
-        background-color: #1a3c25;
-        box-shadow: 0 0 10px #28a745;
-    }
-    
-    .price-tag { color: #0dcaf0; font-weight: bold; }
-    .total-display { font-size: 2rem; font-weight: bold; color: #28a745; }
-</style>
-{% endblock %}
+{# SIN BLOQUE DE CSS #}
 
 {% block body %}
-<div class="inventory-dashboard">
+<div class="sticky-top bg-dark text-white p-3 mb-4 d-flex justify-content-between align-items-center shadow">
     <div>
-        <strong>Usuario:</strong> {{ steamUser }} | 
-        <a href="{{ path('auth_logout') }}" class="text-danger">Desconectar</a>
+        <i class="fab fa-steam"></i>
+        <strong>Usuario:</strong> {{ steamUser|default('Invitado') }} | 
+        <a href="{{ path('auth_logout') }}" class="text-danger text-decoration-none fw-bold">Salir</a>
     </div>
-    <div>
-        <button onclick="selectAll()" class="btn btn-sm btn-outline-light">Todo</button>
-        <button onclick="clearSelection()" class="btn btn-sm btn-outline-light">Nada</button>
+    
+    <div class="btn-group">
+        <button onclick="selectAll()" class="btn btn-sm btn-outline-light">Seleccionar Todo</button>
+        <button onclick="clearSelection()" class="btn btn-sm btn-outline-danger">Limpiar</button>
     </div>
-    <div class="total-display">
+
+    <div class="fs-4 fw-bold text-success">
         Total: $<span id="total-price">0.00</span>
     </div>
 </div>
 
-<div class="container mt-4">
+<div class="container pb-5">
+    {# Mensajes de error #}
     {% for message in app.flashes('error') %}
         <div class="alert alert-danger">{{ message }}</div>
     {% endfor %}
 
     <div class="row g-3" id="inventory-grid">
-        {% for item in items %}
-            <div class="col-6 col-md-3 col-lg-2">
-                <div class="card h-100 skin-card" 
+        {% for item in items|default([]) %}
+            <div class="col-6 col-md-4 col-lg-2">
+                <div class="card h-100 shadow-sm" 
+                     role="button"
                      onclick="toggleItem(this, {{ item.price }})" 
-                     data-price="{{ item.price }}">
+                     data-price="{{ item.price }}"
+                     style="cursor: pointer;"> 
                     
-                    <img src="{{ item.image }}" class="card-img-top p-2" alt="{{ item.name }}">
-                    <div class="card-body p-2 text-center">
-                        <small class="card-title d-block text-truncate" title="{{ item.name }}">
-                            {{ item.name }}
-                        </small>
-                        <div class="price-tag">${{ item.price|number_format(2) }}</div>
+                    <div class="card-body text-center p-2 d-flex flex-column justify-content-between">
+                        <img src="{{ item.image }}" class="img-fluid mb-2" alt="{{ item.name }}" style="max-height: 100px; object-fit: contain;">
+                        
+                        <div>
+                            <small class="d-block text-truncate fw-bold mb-1" title="{{ item.name }}">
+                                {{ item.name }}
+                            </small>
+                            <span class="badge bg-primary">${{ item.price|number_format(2) }}</span>
+                        </div>
                     </div>
                 </div>
             </div>
         {% else %}
-            <div class="col-12 text-center text-white">
-                <p>No se encontraron items o el inventario es privado.</p>
+            <div class="col-12 text-center mt-5">
+                <div class="alert alert-warning">
+                    <h4>Inventario vacío o privado</h4>
+                    <p>No hemos podido cargar tus items. Revisa que tu perfil de Steam sea público.</p>
+                </div>
             </div>
         {% endfor %}
     </div>
@@ -76,43 +63,52 @@
 <script>
     let totalPrice = 0.0;
 
-    function toggleItem(element, price) {
-        // Convertir precio a float por seguridad
+    function toggleItem(cardElement, price) {
         price = parseFloat(price);
 
-        if (element.classList.contains('selected')) {
-            // Deseleccionar
-            element.classList.remove('selected');
+        // Usamos clases de Bootstrap para indicar selección en lugar de CSS propio
+        // 'border-success', 'bg-success', 'text-white' son clases estándar
+        if (cardElement.classList.contains('border-success')) {
+            // DESELECCIONAR: Quitar estilos de Bootstrap
+            cardElement.classList.remove('border-success', 'border', 'border-3', 'bg-success', 'bg-opacity-25');
             totalPrice -= price;
         } else {
-            // Seleccionar
-            element.classList.add('selected');
+            // SELECCIONAR: Añadir estilos de Bootstrap (Borde verde y fondo verdoso)
+            cardElement.classList.add('border-success', 'border', 'border-3', 'bg-success', 'bg-opacity-25');
             totalPrice += price;
         }
         updateDisplay();
     }
 
     function selectAll() {
-        const cards = document.querySelectorAll('.skin-card');
+        const cards = document.querySelectorAll('.card[onclick]'); // Solo las cartas con onclick
         totalPrice = 0;
+        
         cards.forEach(card => {
-            card.classList.add('selected');
-            totalPrice += parseFloat(card.getAttribute('data-price'));
+            // Resetear visualmente primero para no duplicar
+            card.classList.add('border-success', 'border', 'border-3', 'bg-success', 'bg-opacity-25');
+            
+            // Sumar precio
+            const price = parseFloat(card.getAttribute('data-price'));
+            totalPrice += price;
         });
         updateDisplay();
     }
 
     function clearSelection() {
-        const cards = document.querySelectorAll('.skin-card');
-        cards.forEach(card => card.classList.remove('selected'));
+        const cards = document.querySelectorAll('.card[onclick]');
+        cards.forEach(card => {
+            // Quitar todas las clases de "seleccionado"
+            card.classList.remove('border-success', 'border', 'border-3', 'bg-success', 'bg-opacity-25');
+        });
         totalPrice = 0;
         updateDisplay();
     }
 
     function updateDisplay() {
-        // Evitar números negativos por errores de redondeo flotante
-        if (totalPrice < 0) totalPrice = 0;
-        document.getElementById('total-price').innerText = totalPrice.toFixed(2);
+        if (totalPrice < 0.01) totalPrice = 0;
+        // Formato moneda US
+        document.getElementById('total-price').innerText = totalPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     }
 </script>
 {% endblock %}
