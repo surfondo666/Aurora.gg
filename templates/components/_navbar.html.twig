@@ -50,7 +50,7 @@
                     </div>
                 </div>
             {% else %}
-                <a href="{{ path('auth_steam') }}" class="hidden md:flex bg-[#171a21] hover:bg-[#2a475e] text-[#b8b6b4] hover:text-white px-5 py-2 rounded-sm items-center gap-3 font-bold text-xs transition-colors duration-200 group shadow-md">
+                <a href="{{ path('steam_login') }}" class="hidden md:flex bg-[#171a21] hover:bg-[#2a475e] text-[#b8b6b4] hover:text-white px-5 py-2 rounded-sm items-center gap-3 font-bold text-xs transition-colors duration-200 group shadow-md">
                     <i class="fa-brands fa-steam text-2xl group-hover:text-white transition-colors"></i>
                     <div class="flex flex-col items-start leading-tight">
                         <span class="text-[10px] uppercase font-normal opacity-80">Sign in with</span>
@@ -75,7 +75,7 @@
             <div class="border-t border-aurora-border my-2"></div>
             
             {% if not app.user %}
-                <a href="{{ path('auth_steam') }}" class="bg-[#171a21] text-white py-3 px-4 rounded-sm flex items-center justify-center gap-3 hover:bg-[#2a475e] transition-colors">
+                <a href="{{ path('steam_login') }}" class="bg-[#171a21] text-white py-3 px-4 rounded-sm flex items-center justify-center gap-3 hover:bg-[#2a475e] transition-colors">
                     <i class="fa-brands fa-steam text-xl"></i> INICIAR CON STEAM
                 </a>
             {% else %}
