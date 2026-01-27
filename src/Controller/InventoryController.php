@@ -201,21 +201,26 @@ class InventoryController extends AbstractController
     {
         $this->logger->info('Steam check started', ['params' => $request->query->all()]);
 
+        // Use raw QUERY_STRING to avoid PHP's automatic substitution of '.' to '_' and '+' to ' '
+        $queryString = $request->server->get('QUERY_STRING');
         $params = [];
-        foreach ($request->query->all() as $key => $value) {
-            // PHP replaces '.' with '_' in GET/POST keys. We must revert this for Steam OpenID to work.
-            // e.g. openid_ns -> openid.ns
-            if (str_starts_with($key, 'openid_')) {
-                $key = 'openid.' . substr($key, 7);
-            }
 
-            // Fix: signatures often have '+' converted to spaces by some request handlers
-            // We blindly fix it for sig and nonce if it looks suspicious
-            if (($key === 'openid.sig' || $key === 'openid.response_nonce') && str_contains($value, ' ')) {
-                $value = str_replace(' ', '+', $value);
-            }
+        if (!empty($queryString)) {
+            foreach (explode('&', $queryString) as $param) {
+                $parts = explode('=', $param, 2);
+                if (count($parts) === 2) {
+                    $key = urldecode($parts[0]);
+                    $value = urldecode($parts[1]);
 
-            $params[$key] = $value;
+                    // Filter to only keeping openid parameters (security/cleanup)
+                    // and ensure we don't overwrite check_authentication
+                    if ($key === 'openid.mode') {
+                        continue;
+                    }
+
+                    $params[$key] = $value;
+                }
+            }
         }
 
         if (empty($params)) {
