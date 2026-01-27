@@ -4,11 +4,14 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Repository\UserRepository;
+use App\Security\AppAuthenticator;
 use Doctrine\ORM\EntityManagerInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Authentication\UserAuthenticatorInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Contracts\Cache\CacheInterface;
@@ -20,24 +23,46 @@ class InventoryController extends AbstractController
     private string $steamApiKey;
     private UserRepository $userRepository;
     private EntityManagerInterface $entityManager;
+    private LoggerInterface $logger;
+    private UserAuthenticatorInterface $userAuthenticator;
+    private AppAuthenticator $authenticator;
 
     public function __construct(
         HttpClientInterface $client,
         string $steamApiKey,
         UserRepository $userRepository,
-        EntityManagerInterface $entityManager
+        EntityManagerInterface $entityManager,
+        LoggerInterface $logger,
+        UserAuthenticatorInterface $userAuthenticator,
+        AppAuthenticator $authenticator
     ) {
         $this->client = $client;
         $this->steamApiKey = $steamApiKey;
         $this->userRepository = $userRepository;
         $this->entityManager = $entityManager;
+        $this->logger = $logger;
+        $this->userAuthenticator = $userAuthenticator;
+        $this->authenticator = $authenticator;
     }
 
     #[Route('/inventario', name: 'app_inventory')]
     public function index(SessionInterface $session, CacheInterface $cache): Response
     {
-        $steamId = $session->get('steam_id');
-        $steamPersona = $session->get('steam_persona', 'Invitado');
+        // Use Symfony Security User if available, fallback to session for backward compatibility during transition
+        $user = $this->getUser();
+        $steamId = null;
+        $steamPersona = 'Invitado';
+
+        if ($user instanceof User && $user->getSteamId()) {
+            $steamId = $user->getSteamId();
+            // We could store persona in DB too, but for now let's keep logic simple or fetch it
+            // If we don't have persona in DB, we default to something or session
+            $steamPersona = $session->get('steam_persona', 'Usuario');
+        } elseif ($session->has('steam_id')) {
+            // Fallback to old session way if user is somehow logged in via old way but not new way (shouldn't happen after fix)
+            $steamId = $session->get('steam_id');
+            $steamPersona = $session->get('steam_persona', 'Invitado');
+        }
 
         if (!$steamId) {
             return $this->render('inventory/login.html.twig', [
@@ -163,9 +188,13 @@ class InventoryController extends AbstractController
     #[Route('/auth/steam/check', name: 'auth_steam_check')]
     public function check(Request $request, SessionInterface $session): Response
     {
+        $this->logger->info('Steam check started', ['params' => $request->query->all()]);
+
         $params = $request->query->all();
-        if (empty($params))
+        if (empty($params)) {
+            $this->logger->error('Steam check failed: No params');
             return $this->redirectToRoute('app_inventory');
+        }
 
         $params['openid.mode'] = 'check_authentication';
 
@@ -174,9 +203,13 @@ class InventoryController extends AbstractController
                 'body' => $params
             ]);
 
-            if (str_contains($response->getContent(), 'is_valid:true')) {
+            $content = $response->getContent();
+            $this->logger->info('Steam OpenID response', ['content' => $content]);
+
+            if (str_contains($content, 'is_valid:true')) {
                 preg_match('#^https://steamcommunity.com/openid/id/([0-9]{17,25})#', $params['openid_claimed_id'], $matches);
                 $steamId = $matches[1];
+                $this->logger->info('SteamID extracted', ['steamId' => $steamId]);
 
                 // Obtener datos del perfil (Nombre y Avatar)
                 $userUrl = "https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=" . $this->steamApiKey . "&steamids=" . $steamId;
@@ -186,28 +219,47 @@ class InventoryController extends AbstractController
                 $personaName = $userData['response']['players'][0]['personaname'] ?? 'Usuario de Steam';
                 $avatarUrl = $userData['response']['players'][0]['avatarfull'] ?? null;
 
+                $this->logger->info('Steam User Data', ['name' => $personaName, 'avatar' => $avatarUrl]);
+
                 // --- REGISTRO / ACTUALIZACIÓN DE USUARIO ---
                 $user = $this->userRepository->findOneBy(['steamId' => $steamId]);
 
                 if (!$user) {
+                    $this->logger->info('Creating new user for steamId', ['steamId' => $steamId]);
                     $user = new User();
                     $user->setSteamId($steamId);
                     $user->setRoles(['ROLE_USER']);
+                } else {
+                    $this->logger->info('Updating existing user', ['id' => $user->getId()]);
                 }
 
-                // Actualizamos datos siempre (por si cambió el avatar o nombre, aunque nombre no lo guardamos en DB de momento)
+                // Actualizamos datos siempre
                 $user->setSteamAvatar($avatarUrl);
+                // NOTA: Si quisieras guardar el nombre, deberías añadir la propiedad en User.php y hacerlo aquí.
+                // $user->setName($personaName);
 
                 $this->entityManager->persist($user);
                 $this->entityManager->flush();
+                $this->logger->info('User persisted/updated');
                 // -------------------------------------------
 
-                $session->set('steam_id', $steamId);
+                // Store persona in session for display purposes if not in DB
                 $session->set('steam_persona', $personaName);
 
-                return $this->redirectToRoute('app_inventory');
+                // MANUALLY LOG THE USER IN USING SYMFONY SECURITY
+                $this->logger->info('Authenticating user manually via UserAuthenticatorInterface');
+
+                return $this->userAuthenticator->authenticateUser(
+                    $user,
+                    $this->authenticator,
+                    $request
+                );
+
+            } else {
+                $this->logger->error('Steam OpenID validation failed (is_valid:false)');
             }
         } catch (\Exception $e) {
+            $this->logger->critical('Exception during Steam auth', ['error' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);
             $this->addFlash('error', 'Error en la autenticación con Steam.');
         }
 
@@ -217,8 +269,14 @@ class InventoryController extends AbstractController
     #[Route('/auth/logout', name: 'auth_logout')]
     public function logout(SessionInterface $session): Response
     {
+        // logic is handled by security.yaml but we can keep this for explicit logout if needed
+        // usually this route should be interceptable by firewall logout
+
         $session->remove('steam_id');
         $session->remove('steam_persona');
-        return $this->redirectToRoute('app_inventory');
+        // This line is often unreachable if firewall logout intercepts '/auth/logout' 
+        // Ensure security.yaml has logout path set to this if you want to use it
+        // Or better, just redirect to standard logout
+        return $this->redirectToRoute('app_logout');
     }
 }
