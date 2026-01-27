@@ -1,0 +1,103 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Academia | Aurora.gg{% endblock %}
+
+{% block body %}
+<div class="container mx-auto px-4 py-8">
+    <div class="text-center mb-12">
+        <h1 class="text-4xl md:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-aurora-gold to-white uppercase tracking-widest mb-4">
+            Academia Táctica
+        </h1>
+        <p class="text-gray-400 max-w-2xl mx-auto text-lg">
+            Domina el servidor con nuestra base de conocimiento. Aprende humos, comandos y estrategias.
+        </p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
+        <!-- Card Comandos -->
+        <a href="{{ path('app_academy_commands') }}" class="group relative overflow-hidden rounded-xl bg-aurora-card border border-aurora-border hover:border-aurora-gold transition-all duration-300 transform hover:-translate-y-2">
+            <div class="absolute inset-0 bg-gradient-to-b from-transparent to-black/80 z-10"></div>
+            <div class="h-48 bg-[#1b2838] relative">
+                <div class="absolute inset-0 flex items-center justify-center">
+                    <i class="fa-solid fa-terminal text-6xl text-gray-700 group-hover:text-aurora-gold transition-colors duration-300"></i>
+                </div>
+            </div>
+            <div class="p-6 relative z-20">
+                <h3 class="text-2xl font-bold text-white mb-2 group-hover:text-aurora-gold transition-colors">Comandos</h3>
+                <p class="text-gray-400 text-sm">Base de datos de comandos de consola, binds y cheats legales.</p>
+            </div>
+        </a>
+
+        <!-- Card Lineups -->
+        <a href="{{ path('app_academy_videos') }}" class="group relative overflow-hidden rounded-xl bg-aurora-card border border-aurora-border hover:border-aurora-gold transition-all duration-300 transform hover:-translate-y-2">
+            <div class="absolute inset-0 bg-gradient-to-b from-transparent to-black/80 z-10"></div>
+             <div class="h-48 bg-[#1b2838] relative">
+                <div class="absolute inset-0 flex items-center justify-center">
+                    <i class="fa-solid fa-video text-6xl text-gray-700 group-hover:text-aurora-gold transition-colors duration-300"></i>
+                </div>
+            </div>
+            <div class="p-6 relative z-20">
+                <h3 class="text-2xl font-bold text-white mb-2 group-hover:text-aurora-gold transition-colors">Lineups</h3>
+                <p class="text-gray-400 text-sm">Aprende los mejores humos, flashes y molotovs para cada mapa.</p>
+            </div>
+        </a>
+
+        <!-- Card Guias -->
+        <a href="{{ path('app_academy_guides') }}" class="group relative overflow-hidden rounded-xl bg-aurora-card border border-aurora-border hover:border-aurora-gold transition-all duration-300 transform hover:-translate-y-2">
+            <div class="absolute inset-0 bg-gradient-to-b from-transparent to-black/80 z-10"></div>
+             <div class="h-48 bg-[#1b2838] relative">
+                <div class="absolute inset-0 flex items-center justify-center">
+                    <i class="fa-solid fa-book-open text-6xl text-gray-700 group-hover:text-aurora-gold transition-colors duration-300"></i>
+                </div>
+            </div>
+            <div class="p-6 relative z-20">
+                <h3 class="text-2xl font-bold text-white mb-2 group-hover:text-aurora-gold transition-colors">Guías</h3>
+                <p class="text-gray-400 text-sm">Artículos detallados sobre economía, rotaciones y roles.</p>
+            </div>
+        </a>
+    </div>
+
+    <!-- Recent Section -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div>
+            <h2 class="text-xl font-bold text-white mb-4 flex items-center gap-2">
+                <i class="fa-solid fa-upload text-aurora-gold"></i> Últimos Lineups
+            </h2>
+            <div class="space-y-4">
+                {% for video in recent_videos %}
+                    <a href="{{ path('app_academy_videos', {'map': video.map}) }}" class="flex gap-4 p-3 rounded-lg bg-aurora-card border border-aurora-border hover:bg-[#1b2838] transition-colors">
+                        <img src="https://img.youtube.com/vi/{{ video.youtubeId }}/default.jpg" class="w-24 h-16 object-cover rounded">
+                        <div>
+                            <h4 class="font-bold text-white text-sm line-clamp-1">{{ video.title }}</h4>
+                            <span class="text-xs uppercase px-2 py-0.5 rounded bg-gray-700 text-gray-300 mt-1 inline-block">{{ video.map }}</span>
+                            <span class="text-xs uppercase px-2 py-0.5 rounded bg-aurora-gold/20 text-aurora-gold mt-1 inline-block">{{ video.type }}</span>
+                        </div>
+                    </a>
+                {% else %}
+                    <p class="text-gray-500 text-sm italic">No hay videos subidos aún.</p>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div>
+            <h2 class="text-xl font-bold text-white mb-4 flex items-center gap-2">
+                <i class="fa-solid fa-pen-nib text-aurora-gold"></i> Últimas Guías
+            </h2>
+            <div class="space-y-4">
+                {% for guide in recent_guides %}
+                    <a href="#" class="block p-4 rounded-lg bg-aurora-card border border-aurora-border hover:border-aurora-gold transition-all">
+                        <h4 class="font-bold text-white mb-1">{{ guide.title }}</h4>
+                        <div class="flex items-center gap-2 text-xs text-gray-400">
+                             <span><i class="fa-regular fa-user"></i> {{ guide.author.userIdentifier }}</span>
+                             <span>&bull;</span>
+                             <span>{{ guide.createdAt|date('d M Y') }}</span>
+                        </div>
+                    </a>
+                {% else %}
+                     <p class="text-gray-500 text-sm italic">No hay guías publicadas aún.</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

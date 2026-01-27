@@ -1,0 +1,74 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Lineups | Academia Aurora.gg{% endblock %}
+
+{% block body %}
+<div class="container mx-auto px-4 py-8">
+    
+    <div class="flex flex-col md:flex-row justify-between items-end mb-8 gap-6 border-b border-aurora-border pb-6">
+        <div>
+            <h1 class="text-3xl font-extrabold text-white uppercase tracking-wider mb-2">
+                <i class="fa-solid fa-crosshairs text-aurora-gold mr-3"></i> Lineups & Utilidad
+            </h1>
+            <p class="text-gray-400 text-sm">Filtra por mapa y tipo de granada para encontrar el lineup perfecto.</p>
+        </div>
+        
+        <div class="flex flex-wrap gap-2">
+            <a href="{{ path('app_academy_videos') }}" class="px-4 py-2 rounded text-xs font-bold uppercase transition-colors {{ current_map is null ? 'bg-aurora-gold text-black' : 'bg-aurora-card border border-aurora-border text-gray-400 hover:text-white' }}">
+                Todos
+            </a>
+            {% for map in ['mirage', 'inferno', 'nuke', 'overpass', 'ancient', 'anubis', 'vertigo', 'dust2'] %}
+                <a href="{{ path('app_academy_videos', {'map': map, 'type': current_type}) }}" 
+                   class="px-4 py-2 rounded text-xs font-bold uppercase transition-colors {{ current_map == map ? 'bg-aurora-gold text-black' : 'bg-aurora-card border border-aurora-border text-gray-400 hover:text-white' }}">
+                    {{ map }}
+                </a>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Type Filters -->
+    <div class="flex gap-4 mb-8">
+        <a href="{{ path('app_academy_videos', {'map': current_map}) }}" 
+           class="flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold border transition-colors {{ current_type is null ? 'border-aurora-gold text-aurora-gold bg-aurora-gold/10' : 'border-gray-700 text-gray-500 hover:border-gray-500' }}">
+            Todos
+        </a>
+        <a href="{{ path('app_academy_videos', {'map': current_map, 'type': 'smoke'}) }}" 
+           class="flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold border transition-colors {{ current_type == 'smoke' ? 'border-gray-300 text-white bg-gray-800' : 'border-gray-700 text-gray-500 hover:border-gray-500' }}">
+            <div class="w-2 h-2 rounded-full bg-gray-400"></div> Smoke
+        </a>
+        <a href="{{ path('app_academy_videos', {'map': current_map, 'type': 'flash'}) }}" 
+           class="flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold border transition-colors {{ current_type == 'flash' ? 'border-yellow-200 text-yellow-100 bg-yellow-900/30' : 'border-gray-700 text-gray-500 hover:border-gray-500' }}">
+            <div class="w-2 h-2 rounded-full bg-yellow-400"></div> Flash
+        </a>
+        <a href="{{ path('app_academy_videos', {'map': current_map, 'type': 'molotov'}) }}" 
+           class="flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold border transition-colors {{ current_type == 'molotov' ? 'border-red-400 text-red-100 bg-red-900/30' : 'border-gray-700 text-gray-500 hover:border-gray-500' }}">
+            <div class="w-2 h-2 rounded-full bg-red-500"></div> Molotov
+        </a>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {% for video in videos %}
+            <div class="bg-aurora-card border border-aurora-border rounded-xl overflow-hidden hover:border-aurora-gold transition-all duration-300 group">
+                <div class="relative aspect-video">
+                    <iframe class="w-full h-full" src="https://www.youtube.com/embed/{{ video.youtubeId }}" title="{{ video.title }}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+                </div>
+                <div class="p-4">
+                    <div class="flex justify-between items-start mb-2">
+                        <span class="text-[10px] font-bold uppercase tracking-widest text-[#66c0f4]">{{ video.map }}</span>
+                        <span class="text-[10px] font-bold uppercase tracking-widest text-gray-500 border border-gray-700 px-1.5 rounded">{{ video.type }}</span>
+                    </div>
+                    <h3 class="text-white font-bold leading-tight group-hover:text-aurora-gold transition-colors">{{ video.title }}</h3>
+                    {% if video.description %}
+                        <p class="text-gray-400 text-xs mt-2 line-clamp-2">{{ video.description }}</p>
+                    {% endif %}
+                </div>
+            </div>
+        {% else %}
+            <div class="col-span-full py-12 text-center">
+                <i class="fa-solid fa-film text-4xl text-gray-700 mb-4"></i>
+                <p class="text-gray-500">No hay videos que coincidan con los filtros seleccionados.</p>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

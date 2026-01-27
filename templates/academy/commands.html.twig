@@ -1,0 +1,90 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Comandos | Academia Aurora.gg{% endblock %}
+
+{% block body %}
+<div class="container mx-auto px-4 py-8">
+    <div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
+        <div>
+            <h1 class="text-3xl font-extrabold text-white uppercase tracking-wider">
+                <i class="fa-solid fa-terminal text-aurora-gold mr-3"></i> Comandos de Consola
+            </h1>
+            <p class="text-gray-400 text-sm mt-1">Busca y copia los mejores comandos para configurar tu juego.</p>
+        </div>
+        
+        <div class="flex flex-col gap-4">
+             <form method="get" class="w-full md:w-auto relative">
+                <input type="text" name="q" value="{{ search }}" placeholder="Buscar comando..." 
+                       class="w-full md:w-80 bg-aurora-card border border-aurora-border rounded-lg pl-10 pr-4 py-2 text-white focus:outline-none focus:border-aurora-gold focus:ring-1 focus:ring-aurora-gold transition-all">
+                <i class="fa-solid fa-magnifying-glass absolute left-3 top-3 text-gray-500"></i>
+                {% if current_category %}
+                    <input type="hidden" name="category" value="{{ current_category }}">
+                {% endif %}
+            </form>
+        </div>
+    </div>
+
+    <!-- Category Filters -->
+    <div class="flex flex-wrap gap-2 mb-6">
+        <a href="{{ path('app_academy_commands', {'q': search}) }}" 
+           class="px-4 py-2 rounded text-xs font-bold uppercase transition-colors border {{ current_category is null ? 'bg-aurora-gold text-black border-aurora-gold' : 'bg-aurora-card border-aurora-border text-gray-400 hover:text-white hover:border-gray-500' }}">
+            Todos
+        </a>
+        {% for cat in ['cheat', 'bind', 'setting', 'other'] %}
+            <a href="{{ path('app_academy_commands', {'category': cat, 'q': search}) }}" 
+               class="px-4 py-2 rounded text-xs font-bold uppercase transition-colors border {{ current_category == cat ? 'bg-aurora-gold text-black border-aurora-gold' : 'bg-aurora-card border-aurora-border text-gray-400 hover:text-white hover:border-gray-500' }}">
+                {{ cat }}
+            </a>
+        {% endfor %}
+    </div>
+
+    <div class="bg-aurora-card border border-aurora-border rounded-xl overflow-hidden shadow-xl">
+        <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="bg-[#1b2838] border-b border-aurora-border">
+                        <th class="p-4 text-xs font-bold text-gray-400 uppercase tracking-wider">Comando</th>
+                        <th class="p-4 text-xs font-bold text-gray-400 uppercase tracking-wider">Descripción</th>
+                        <th class="p-4 text-xs font-bold text-gray-400 uppercase tracking-wider">Categoría</th>
+                        <th class="p-4 text-xs font-bold text-gray-400 uppercase tracking-wider">Acción</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-aurora-border/50">
+                    {% for command in commands %}
+                        <tr class="hover:bg-[#1b2838]/50 transition-colors group">
+                            <td class="p-4 font-mono text-aurora-gold text-sm font-bold selectable">
+                                {{ command.name }}
+                            </td>
+                            <td class="p-4 text-gray-300 text-sm">
+                                {{ command.description }}
+                                {% if command.usage %}
+                                    <div class="mt-1 text-xs text-gray-500 font-mono bg-black/30 px-2 py-1 rounded inline-block">
+                                        Uso: {{ command.usage }}
+                                    </div>
+                                {% endif %}
+                            </td>
+                            <td class="p-4">
+                                <span class="text-[10px] uppercase font-bold px-2 py-1 rounded bg-gray-800 text-gray-400 border border-gray-700">
+                                    {{ command.category }}
+                                </span>
+                            </td>
+                            <td class="p-4">
+                                <button onclick="navigator.clipboard.writeText('{{ command.name }}')" 
+                                        class="text-gray-500 hover:text-white transition-colors" title="Copiar al portapapeles">
+                                    <i class="fa-regular fa-copy"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="4" class="p-8 text-center text-gray-500">
+                                No se encontraron comandos que coincidan con tu búsqueda.
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

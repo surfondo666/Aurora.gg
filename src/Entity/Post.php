@@ -39,11 +39,10 @@ class Post
     /**
      * @var Collection<int, User>
      */
-    #[ORM\ManyToMany(targetEntity: User::class)]
+    #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'savedPosts')]
     #[ORM\JoinTable(name: 'post_saved')]
     private Collection $savedBy;
 
-    // --- AQUÍ ESTABA EL ERROR: FALTABA ESTA PROPIEDAD ---
     #[ORM\OneToMany(mappedBy: 'post', targetEntity: Comment::class, orphanRemoval: true)]
     private Collection $comments;
 
@@ -54,7 +53,7 @@ class Post
     {
         $this->likes = new ArrayCollection();
         $this->savedBy = new ArrayCollection();
-        $this->comments = new ArrayCollection(); // <--- Inicializar comentarios
+        $this->comments = new ArrayCollection();
         $this->createdAt = new \DateTimeImmutable();
     }
 
