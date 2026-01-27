@@ -24,11 +24,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 180, nullable: true)]
     private ?string $email = null;
 
-    #[ORM\Column(length: 255, unique: true, nullable: true)]
-    private ?string $steamId = null;
-
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $steamAvatar = null;
+    #[ORM\Column(nullable: true)]
+    private ?string $googleId = null;
 
     /**
      * @var list<string> The user roles
@@ -54,18 +51,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\ManyToMany(targetEntity: Post::class, mappedBy: 'savedBy')]
     private Collection $savedPosts;
 
-
-    public function __construct()
-    {
-        $this->posts = new ArrayCollection();
-        $this->savedPosts = new ArrayCollection();
-    }
-
-    public function getId(): ?int
-    {
-        return $this->id;
-    }
-
     public function getEmail(): ?string
     {
         return $this->email;
@@ -78,31 +63,21 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+    public function getGoogleId(): ?string
+    {
+        return $this->googleId;
+    }
+
+    public function setGoogleId(?string $googleId): static
+    {
+        $this->googleId = $googleId;
+
+        return $this;
+    }
+
     public function getUserIdentifier(): string
     {
-        return $this->email ?? $this->steamId ?? 'Guest';
-    }
-
-    public function getSteamId(): ?string
-    {
-        return $this->steamId;
-    }
-
-    public function setSteamId(?string $steamId): static
-    {
-        $this->steamId = $steamId;
-        return $this;
-    }
-
-    public function getSteamAvatar(): ?string
-    {
-        return $this->steamAvatar;
-    }
-
-    public function setSteamAvatar(?string $steamAvatar): static
-    {
-        $this->steamAvatar = $steamAvatar;
-        return $this;
+        return (string) $this->email;
     }
 
     public function getRoles(): array

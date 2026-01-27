@@ -13,9 +13,10 @@ security:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
         main:
-            lazy: true
-            provider: app_user_provider
-            custom_authenticator: App\Security\AppAuthenticator
+            entry_point: App\Security\AppAuthenticator
+            custom_authenticator:
+                - App\Security\AppAuthenticator
+                - App\Security\GoogleAuthenticator
             logout:
                 path: app_logout
                 # where to redirect after logout

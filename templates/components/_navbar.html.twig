@@ -17,8 +17,8 @@
             <a href="{{ path('app_servers') }}" class="transition-colors hover:text-aurora-gold {{ route == 'app_servers' ? 'text-aurora-gold border-b-2 border-aurora-gold pb-1' : 'text-gray-400' }}">
                <i class="fa-solid fa-server mr-1"></i> Servidores
             </a>
-            <a href="{{ path('app_inventory') }}" class="transition-colors hover:text-aurora-gold {{ route == 'app_inventory' ? 'text-aurora-gold border-b-2 border-aurora-gold pb-1' : 'text-gray-400' }}">
-               <i class="fa-solid fa-box-open mr-1"></i> Inventario
+            <a href="{{ path('app_academy_index') }}" class="transition-colors hover:text-aurora-gold {{ 'academy' in route ? 'text-aurora-gold border-b-2 border-aurora-gold pb-1' : 'text-gray-400' }}">
+               <i class="fa-solid fa-graduation-cap mr-1"></i> Academia
             </a>
             <a href="{{ path('app_community') }}" class="transition-colors hover:text-aurora-gold {{ route == 'app_community' ? 'text-aurora-gold border-b-2 border-aurora-gold pb-1' : 'text-gray-400' }}">
                <i class="fa-solid fa-users mr-1"></i> Comunidad
@@ -44,19 +44,23 @@
                     </button>
                     <div class="absolute right-0 mt-2 w-48 bg-aurora-card border border-aurora-border rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
                         <div class="py-1">
-                            <a href="{{ path('admin') }}" class="block px-4 py-2 text-sm text-gray-300 hover:text-aurora-gold"><i class="fa-solid fa-gauge-high w-5"></i> Admin</a>
+                            <!--<a href="{{ path('admin') }}" class="block px-4 py-2 text-sm text-gray-300 hover:text-aurora-gold"><i class="fa-solid fa-gauge-high w-5"></i> Admin</a>-->
                             <a href="{{ path('app_logout') }}" class="block px-4 py-2 text-sm text-red-400 hover:bg-red-900/20"><i class="fa-solid fa-power-off w-5"></i> Salir</a>
                         </div>
                     </div>
                 </div>
             {% else %}
-                <a href="{{ path('steam_login') }}" class="hidden md:flex bg-[#171a21] hover:bg-[#2a475e] text-[#b8b6b4] hover:text-white px-5 py-2 rounded-sm items-center gap-3 font-bold text-xs transition-colors duration-200 group shadow-md">
-                    <i class="fa-brands fa-steam text-2xl group-hover:text-white transition-colors"></i>
-                    <div class="flex flex-col items-start leading-tight">
-                        <span class="text-[10px] uppercase font-normal opacity-80">Sign in with</span>
-                        <span class="text-sm tracking-wide font-bold">STEAM</span>
-                    </div>
-                </a>
+
+
+                <div class="hidden md:flex items-center gap-4">
+                    <a href="{{ path('app_login') }}" class="text-sm font-bold text-gray-300 hover:text-white transition-colors uppercase tracking-wider">
+                        Iniciar Sesión
+                    </a>
+                    <a href="{{ path('app_register') }}" class="flex bg-aurora-gold text-black px-5 py-2 rounded-sm items-center gap-2 font-bold text-xs hover:bg-white transition-colors shadow-lg uppercase tracking-wider transform hover:-translate-y-0.5">
+                        <i class="fa-solid fa-user-plus"></i>
+                        Registrarse
+                    </a>
+                </div>
             {% endif %}
 
             <button id="mobile-menu-btn" class="md:hidden text-white text-2xl ml-2 p-2 focus:outline-none">
@@ -68,16 +72,15 @@
     <div id="mobile-menu" class="hidden md:hidden bg-aurora-card border-t border-aurora-border absolute w-full left-0 shadow-2xl">
         <div class="flex flex-col p-4 space-y-4 font-bold text-gray-300">
             <a href="{{ path('app_servers') }}" class="hover:text-aurora-gold"><i class="fa-solid fa-server w-6"></i> Servidores</a>
-            <a href="{{ path('app_inventory') }}" class="hover:text-aurora-gold"><i class="fa-solid fa-box-open w-6"></i> Inventario</a>
+            <a href="{{ path('app_academy_index') }}" class="hover:text-aurora-gold"><i class="fa-solid fa-graduation-cap w-6"></i> Academia</a>
             <a href="{{ path('app_community') }}" class="hover:text-aurora-gold"><i class="fa-solid fa-users w-6"></i> Comunidad</a>
             <a href="{{ path('app_workshop') }}" class="hover:text-aurora-gold"><i class="fa-solid fa-steam-symbol w-6"></i> Workshop</a>
             
             <div class="border-t border-aurora-border my-2"></div>
             
             {% if not app.user %}
-                <a href="{{ path('steam_login') }}" class="bg-[#171a21] text-white py-3 px-4 rounded-sm flex items-center justify-center gap-3 hover:bg-[#2a475e] transition-colors">
-                    <i class="fa-brands fa-steam text-xl"></i> INICIAR CON STEAM
-                </a>
+                <a href="{{ path('app_login') }}" class="hover:text-aurora-gold"><i class="fa-solid fa-right-to-bracket w-6"></i> Iniciar Sesión</a>
+                <a href="{{ path('app_register') }}" class="text-aurora-gold hover:text-white font-bold"><i class="fa-solid fa-user-plus w-6"></i> Registrarse</a>
             {% else %}
                 <a href="{{ path('admin') }}" class="hover:text-aurora-gold"><i class="fa-solid fa-gauge-high w-6"></i> Panel Admin</a>
                 <a href="{{ path('app_logout') }}" class="text-red-400"><i class="fa-solid fa-power-off w-6"></i> Cerrar Sesión</a>
