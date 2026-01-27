@@ -44,7 +44,15 @@
                             <small class="d-block text-truncate fw-bold mb-1" title="{{ item.name }}">
                                 {{ item.name }}
                             </small>
-                            <span class="badge bg-primary">${{ item.price|number_format(2) }}</span>
+                            <div class="mb-1">
+                                <span class="badge bg-primary">${{ item.price|number_format(2) }}</span>
+                            </div>
+                            {% if item.float is defined and item.float is not null %}
+                                <div class="text-xs text-muted" style="font-size: 0.7rem;">
+                                    Float: {{ item.float|number_format(4) }}<br>
+                                    Pattern: {{ item.pattern|default('?') }}
+                                </div>
+                            {% endif %}
                         </div>
                     </div>
                 </div>

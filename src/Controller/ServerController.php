@@ -35,9 +35,9 @@ class ServerController extends AbstractController
         $online = false;
 
         try {
-            // Intentamos conectar (Timeout de 1 segundo para no bloquear)
-            $query->Connect($server->getIpAdress(), $server->getPort() ?? 27015, 1, SourceQuery::SOURCE);
-            
+            // Intentamos conectar (Timeout aumentado a 3 segundos)
+            $query->Connect($server->getIpAdress(), $server->getPort() ?? 27015, 3, SourceQuery::SOURCE);
+
             // Obtenemos la info real
             $info = $query->GetInfo();
             $online = true;
@@ -54,7 +54,7 @@ class ServerController extends AbstractController
                 'map' => $info['Map'] ?? 'Unknown',
                 'players' => $info['Players'] ?? 0,
                 'max_players' => $info['MaxPlayers'] ?? 0,
-                'ping' => rand(20, 60) // Simulación de ping cliente-servidor (técnicamente imposible de medir real con PHP)
+                'ping' => rand(20, 60) // Simulación de ping cliente-servidor
             ]);
         } else {
             return $this->json(['online' => false]);
@@ -99,13 +99,13 @@ class ServerController extends AbstractController
         $em->flush();
         return $this->redirectToRoute('app_servers');
     }
-    
+
     // 5. EDITAR (SOLO ADMIN)
     #[Route('/{id}/edit', name: 'app_server_edit')]
     public function edit(Request $request, Server $server, EntityManagerInterface $em): Response
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
-        
+
         $form = $this->createForm(ServerType::class, $server);
         $form->handleRequest($request);
 

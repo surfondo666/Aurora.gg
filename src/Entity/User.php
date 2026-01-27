@@ -21,8 +21,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 180)]
+    #[ORM\Column(length: 180, nullable: true)]
     private ?string $email = null;
+
+    #[ORM\Column(length: 255, unique: true, nullable: true)]
+    private ?string $steamId = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $steamAvatar = null;
 
     /**
      * @var list<string> The user roles
@@ -33,7 +39,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @var string The hashed password
      */
-    #[ORM\Column]
+    #[ORM\Column(nullable: true)]
     private ?string $password = null;
 
     /**
@@ -74,7 +80,29 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function getUserIdentifier(): string
     {
-        return (string) $this->email;
+        return $this->email ?? $this->steamId ?? 'Guest';
+    }
+
+    public function getSteamId(): ?string
+    {
+        return $this->steamId;
+    }
+
+    public function setSteamId(?string $steamId): static
+    {
+        $this->steamId = $steamId;
+        return $this;
+    }
+
+    public function getSteamAvatar(): ?string
+    {
+        return $this->steamAvatar;
+    }
+
+    public function setSteamAvatar(?string $steamAvatar): static
+    {
+        $this->steamAvatar = $steamAvatar;
+        return $this;
     }
 
     public function getRoles(): array
@@ -97,7 +125,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->password;
     }
 
-    public function setPassword(string $password): static
+    public function setPassword(?string $password): static
     {
         $this->password = $password;
 
