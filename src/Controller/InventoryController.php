@@ -173,16 +173,27 @@ class InventoryController extends AbstractController
     #[Route('/auth/steam', name: 'auth_steam')]
     public function login(): Response
     {
+        $logFile = $this->getParameter('kernel.project_dir') . '/var/steam_debug.log';
+        file_put_contents($logFile, "Steam LOGIN init at " . date('Y-m-d H:i:s') . "\n", FILE_APPEND);
+
+        $returnTo = $this->generateUrl('auth_steam_check', [], 0);
+        $realm = $this->generateUrl('app_inventory', [], 0);
+
+        file_put_contents($logFile, "ReturnTo: $returnTo\nRealm: $realm\n", FILE_APPEND);
+
         $params = [
             'openid.ns' => 'http://specs.openid.net/auth/2.0',
             'openid.mode' => 'checkid_setup',
-            'openid.return_to' => $this->generateUrl('auth_steam_check', [], 0),
-            'openid.realm' => $this->generateUrl('app_inventory', [], 0),
+            'openid.return_to' => $returnTo,
+            'openid.realm' => $realm,
             'openid.identity' => 'http://specs.openid.net/auth/2.0/identifier_select',
             'openid.claimed_id' => 'http://specs.openid.net/auth/2.0/identifier_select',
         ];
 
-        return $this->redirect('https://steamcommunity.com/openid/login?' . http_build_query($params));
+        $url = 'https://steamcommunity.com/openid/login?' . http_build_query($params);
+        file_put_contents($logFile, "Redirecting to: $url\n", FILE_APPEND);
+
+        return $this->redirect($url);
     }
 
     #[Route('/auth/steam/check', name: 'auth_steam_check')]
