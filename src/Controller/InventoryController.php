@@ -201,7 +201,16 @@ class InventoryController extends AbstractController
     {
         $this->logger->info('Steam check started', ['params' => $request->query->all()]);
 
-        $params = $request->query->all();
+        $params = [];
+        foreach ($request->query->all() as $key => $value) {
+            // PHP replaces '.' with '_' in GET/POST keys. We must revert this for Steam OpenID to work.
+            // e.g. openid_ns -> openid.ns
+            if (str_starts_with($key, 'openid_')) {
+                $key = 'openid.' . substr($key, 7);
+            }
+            $params[$key] = $value;
+        }
+
         if (empty($params)) {
             $this->addFlash('error', 'Steam Auth Error: No parameters returned from Steam.');
             $this->logger->error('Steam check failed: No params');
