@@ -208,6 +208,13 @@ class InventoryController extends AbstractController
             if (str_starts_with($key, 'openid_')) {
                 $key = 'openid.' . substr($key, 7);
             }
+
+            // Fix: signatures often have '+' converted to spaces by some request handlers
+            // We blindly fix it for sig and nonce if it looks suspicious
+            if (($key === 'openid.sig' || $key === 'openid.response_nonce') && str_contains($value, ' ')) {
+                $value = str_replace(' ', '+', $value);
+            }
+
             $params[$key] = $value;
         }
 
