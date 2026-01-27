@@ -188,10 +188,14 @@ class InventoryController extends AbstractController
     #[Route('/auth/steam/check', name: 'auth_steam_check')]
     public function check(Request $request, SessionInterface $session): Response
     {
+        $logFile = $this->getParameter('kernel.project_dir') . '/var/steam_debug.log';
+        file_put_contents($logFile, "Steam check started at " . date('Y-m-d H:i:s') . "\n", FILE_APPEND);
+
         $this->logger->info('Steam check started', ['params' => $request->query->all()]);
 
         $params = $request->query->all();
         if (empty($params)) {
+            file_put_contents($logFile, "Error: No params\n", FILE_APPEND);
             $this->logger->error('Steam check failed: No params');
             return $this->redirectToRoute('app_inventory');
         }
@@ -199,16 +203,19 @@ class InventoryController extends AbstractController
         $params['openid.mode'] = 'check_authentication';
 
         try {
+            file_put_contents($logFile, "Sending request to Steam...\n", FILE_APPEND);
             $response = $this->client->request('POST', 'https://steamcommunity.com/openid/login', [
                 'body' => $params
             ]);
 
             $content = $response->getContent();
+            file_put_contents($logFile, "Steam response: " . substr($content, 0, 100) . "...\n", FILE_APPEND);
             $this->logger->info('Steam OpenID response', ['content' => $content]);
 
             if (str_contains($content, 'is_valid:true')) {
                 preg_match('#^https://steamcommunity.com/openid/id/([0-9]{17,25})#', $params['openid_claimed_id'], $matches);
                 $steamId = $matches[1];
+                file_put_contents($logFile, "SteamID verified: $steamId\n", FILE_APPEND);
                 $this->logger->info('SteamID extracted', ['steamId' => $steamId]);
 
                 // Obtener datos del perfil (Nombre y Avatar)
@@ -225,11 +232,13 @@ class InventoryController extends AbstractController
                 $user = $this->userRepository->findOneBy(['steamId' => $steamId]);
 
                 if (!$user) {
+                    file_put_contents($logFile, "Creating NEW User\n", FILE_APPEND);
                     $this->logger->info('Creating new user for steamId', ['steamId' => $steamId]);
                     $user = new User();
                     $user->setSteamId($steamId);
                     $user->setRoles(['ROLE_USER']);
                 } else {
+                    file_put_contents($logFile, "Found EXISTING User ID: " . $user->getId() . "\n", FILE_APPEND);
                     $this->logger->info('Updating existing user', ['id' => $user->getId()]);
                 }
 
@@ -240,6 +249,7 @@ class InventoryController extends AbstractController
 
                 $this->entityManager->persist($user);
                 $this->entityManager->flush();
+                file_put_contents($logFile, "User flushed to DB\n", FILE_APPEND);
                 $this->logger->info('User persisted/updated');
                 // -------------------------------------------
 
@@ -248,17 +258,23 @@ class InventoryController extends AbstractController
 
                 // MANUALLY LOG THE USER IN USING SYMFONY SECURITY
                 $this->logger->info('Authenticating user manually via UserAuthenticatorInterface');
+                file_put_contents($logFile, "Attempting UserAuthenticatorInterface->authenticateUser...\n", FILE_APPEND);
 
-                return $this->userAuthenticator->authenticateUser(
+                $response = $this->userAuthenticator->authenticateUser(
                     $user,
                     $this->authenticator,
                     $request
                 );
 
+                file_put_contents($logFile, "Authentication successful (returned Response)\n", FILE_APPEND);
+                return $response;
+
             } else {
+                file_put_contents($logFile, "INVALID Steam response\n", FILE_APPEND);
                 $this->logger->error('Steam OpenID validation failed (is_valid:false)');
             }
         } catch (\Exception $e) {
+            file_put_contents($logFile, "EXCEPTION: " . $e->getMessage() . "\n" . $e->getTraceAsString() . "\n", FILE_APPEND);
             $this->logger->critical('Exception during Steam auth', ['error' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);
             $this->addFlash('error', 'Error en la autenticación con Steam.');
         }
