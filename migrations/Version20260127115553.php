@@ -20,7 +20,7 @@ final class Version20260127115553 extends AbstractMigration
     public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->addSql('DROP SEQUENCE graphql.seq_schema_version CASCADE');
+        // $this->addSql('DROP SEQUENCE graphql.seq_schema_version CASCADE');
         $this->addSql('DROP INDEX uniq_steam_id');
         $this->addSql('ALTER TABLE app_user ADD google_id VARCHAR(255) DEFAULT NULL');
         $this->addSql('ALTER TABLE app_user DROP steam_id');

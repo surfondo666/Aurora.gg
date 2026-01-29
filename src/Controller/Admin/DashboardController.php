@@ -3,8 +3,10 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Skin;
-// IMPORTANTE: Esta línea debe coincidir con el nombre de tu archivo en src/Controller/Admin/
-use App\Controller\Admin\SkinCrudController; 
+use App\Entity\ConsoleCommand;
+use App\Entity\AcademyVideo;
+use App\Entity\AcademyGuide;
+use App\Controller\Admin\SkinCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
@@ -36,6 +38,12 @@ class DashboardController extends AbstractDashboardController
     public function configureMenuItems(): iterable
     {
         yield MenuItem::linkToDashboard('Dashboard', 'fa fa-home');
+
+        yield MenuItem::section('Academia');
+        yield MenuItem::linkToCrud('Comandos', 'fas fa-terminal', ConsoleCommand::class);
+        yield MenuItem::linkToCrud('Videos', 'fas fa-video', AcademyVideo::class);
+        yield MenuItem::linkToCrud('Guías', 'fas fa-book', AcademyGuide::class);
+
         yield MenuItem::section('Gestión');
         yield MenuItem::linkToCrud('Skins', 'fas fa-gun', Skin::class);
         // Asegúrate de que 'app_home' es la ruta correcta, si no, bórrala temporalmente
