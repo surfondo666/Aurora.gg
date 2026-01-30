@@ -44,7 +44,9 @@
                     </button>
                     <div class="absolute right-0 mt-2 w-48 bg-aurora-card border border-aurora-border rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
                         <div class="py-1">
-                            <!--<a href="{{ path('admin') }}" class="block px-4 py-2 text-sm text-gray-300 hover:text-aurora-gold"><i class="fa-solid fa-gauge-high w-5"></i> Admin</a>-->
+                            {% if is_granted('ROLE_ADMIN') %}
+                                <a href="{{ path('admin') }}" class="block px-4 py-2 text-sm text-gray-300 hover:text-aurora-gold"><i class="fa-solid fa-gauge-high w-5"></i> Admin</a>
+                            {% endif %}
                             <a href="{{ path('app_logout') }}" class="block px-4 py-2 text-sm text-red-400 hover:bg-red-900/20"><i class="fa-solid fa-power-off w-5"></i> Salir</a>
                         </div>
                     </div>
@@ -82,7 +84,9 @@
                 <a href="{{ path('app_login') }}" class="hover:text-aurora-gold"><i class="fa-solid fa-right-to-bracket w-6"></i> Iniciar Sesión</a>
                 <a href="{{ path('app_register') }}" class="text-aurora-gold hover:text-white font-bold"><i class="fa-solid fa-user-plus w-6"></i> Registrarse</a>
             {% else %}
-                <a href="{{ path('admin') }}" class="hover:text-aurora-gold"><i class="fa-solid fa-gauge-high w-6"></i> Panel Admin</a>
+                {% if is_granted('ROLE_ADMIN') %}
+                    <a href="{{ path('admin') }}" class="hover:text-aurora-gold"><i class="fa-solid fa-gauge-high w-6"></i> Panel Admin</a>
+                {% endif %}
                 <a href="{{ path('app_logout') }}" class="text-red-400"><i class="fa-solid fa-power-off w-6"></i> Cerrar Sesión</a>
             {% endif %}
         </div>
