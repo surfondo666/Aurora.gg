@@ -43,9 +43,7 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToCrud('Comandos', 'fas fa-terminal', ConsoleCommand::class);
         yield MenuItem::linkToCrud('Videos', 'fas fa-video', AcademyVideo::class);
         yield MenuItem::linkToCrud('Guías', 'fas fa-book', AcademyGuide::class);
-
-        yield MenuItem::section('Gestión');
-        yield MenuItem::linkToCrud('Skins', 'fas fa-gun', Skin::class);
+        
         // Asegúrate de que 'app_home' es la ruta correcta, si no, bórrala temporalmente
         yield MenuItem::linkToRoute('Volver a la Web', 'fas fa-arrow-left', 'app_home');
     }

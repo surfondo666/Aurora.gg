@@ -15,7 +15,7 @@ doctrine:
             factor_type: string
             aal_level: string
             
-        schema_filter: '~^(?!auth\.|storage\.|realtime\.|extensions\.)~'    
+        schema_filter: '~^(?!auth\.|storage\.|realtime\.|extensions\.|graphql\.|graphql_public\.|vault\.|pgbouncer\.)~'
     orm:
         auto_generate_proxy_classes: true
         enable_lazy_ghost_objects: true
