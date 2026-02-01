@@ -8,6 +8,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\ImageField;
 
 class AcademyVideoCrudController extends AbstractCrudController
 {
@@ -20,8 +21,33 @@ class AcademyVideoCrudController extends AbstractCrudController
     {
         return [
             IdField::new('id')->hideOnForm(),
+            
             TextField::new('title', 'Título'),
-            TextField::new('youtubeId', 'ID de YouTube (ej: dQw4w9WgXcQ)'),
+
+            // CAMPO PARA SUBIR EL VIDEO
+            ImageField::new('videoFilename', 'Archivo de Video (MP4)')
+                ->setBasePath('uploads/academy/videos') 
+                ->setUploadDir('public/uploads/academy/videos') 
+                ->setUploadedFileNamePattern('[randomhash].[extension]')
+                ->setRequired(false)
+                // Validación para aceptar solo videos
+                ->setFileConstraints(new \Symfony\Component\Validator\Constraints\File([
+                    'maxSize' => '50M', 
+                    'mimeTypes' => [
+                        'video/mp4',
+                        'video/mpeg',
+                        'video/quicktime',
+                    ],
+                    'mimeTypesMessage' => 'Por favor sube un video válido (MP4)',
+                ])),
+
+            // CAMPO PARA SUBIR LA MINIATURA (Imagen)
+            ImageField::new('thumbnailFilename', 'Miniatura (Portada)')
+                ->setBasePath('uploads/academy/thumbnails')
+                ->setUploadDir('public/uploads/academy/thumbnails')
+                ->setUploadedFileNamePattern('[randomhash].[extension]')
+                ->setRequired(false),
+
             ChoiceField::new('type', 'Tipo')
                 ->setChoices([
                     'Smoke' => 'smoke',
@@ -29,6 +55,7 @@ class AcademyVideoCrudController extends AbstractCrudController
                     'Molotov' => 'molotov',
                     'Grenade' => 'grenade',
                 ]),
+
             ChoiceField::new('map', 'Mapa')
                 ->setChoices([
                     'Mirage' => 'mirage',
@@ -40,6 +67,7 @@ class AcademyVideoCrudController extends AbstractCrudController
                     'Ancient' => 'ancient',
                     'Anubis' => 'anubis',
                 ]),
+
             TextareaField::new('description', 'Descripción'),
         ];
     }

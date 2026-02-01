@@ -20,14 +20,19 @@ class AcademyVideo
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $description = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $youtubeId = null;
+    // CAMBIO: Reemplazamos youtubeId por videoFilename
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $videoFilename = null;
+
+    // NUEVO: Campo para subir una imagen de portada manual
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $thumbnailFilename = null;
 
     #[ORM\Column(length: 50)]
-    private ?string $type = null; // smoke, flash, molotov, grenade
+    private ?string $type = null;
 
     #[ORM\Column(length: 50)]
-    private ?string $map = null; // mirage, inferno, etc.
+    private ?string $map = null;
 
     public function getId(): ?int
     {
@@ -42,7 +47,6 @@ class AcademyVideo
     public function setTitle(string $title): static
     {
         $this->title = $title;
-
         return $this;
     }
 
@@ -54,19 +58,30 @@ class AcademyVideo
     public function setDescription(?string $description): static
     {
         $this->description = $description;
-
         return $this;
     }
 
-    public function getYoutubeId(): ?string
+    // Getters y Setters para el Video
+    public function getVideoFilename(): ?string
     {
-        return $this->youtubeId;
+        return $this->videoFilename;
     }
 
-    public function setYoutubeId(string $youtubeId): static
+    public function setVideoFilename(?string $videoFilename): static
     {
-        $this->youtubeId = $youtubeId;
+        $this->videoFilename = $videoFilename;
+        return $this;
+    }
 
+    // Getters y Setters para la Miniatura
+    public function getThumbnailFilename(): ?string
+    {
+        return $this->thumbnailFilename;
+    }
+
+    public function setThumbnailFilename(?string $thumbnailFilename): static
+    {
+        $this->thumbnailFilename = $thumbnailFilename;
         return $this;
     }
 
@@ -78,7 +93,6 @@ class AcademyVideo
     public function setType(string $type): static
     {
         $this->type = $type;
-
         return $this;
     }
 
@@ -90,7 +104,6 @@ class AcademyVideo
     public function setMap(string $map): static
     {
         $this->map = $map;
-
         return $this;
     }
 }
