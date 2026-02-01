@@ -11,8 +11,7 @@ class WorkshopController extends AbstractController
     #[Route('/workshop', name: 'app_workshop')]
     public function index(): Response
     {
-        // Aquí definimos los mapas manualmente (simulando una base de datos)
-        // Puedes añadir más copiando y pegando los bloques.
+        
         $maps = [
             // --- AIM TRAINING ---
             [
@@ -54,7 +53,7 @@ class WorkshopController extends AbstractController
                 'tags' => ['Classic', 'Sniper', 'Rifle']
             ],
 
-            // --- SURF & BHOP ---
+            // --- SURF ---
             [
                 'title' => 'Surf Utopia (CS2 Port)',
                 'category' => 'SURF',
@@ -64,24 +63,60 @@ class WorkshopController extends AbstractController
                 'link' => 'https://steamcommunity.com/sharedfiles/filedetails/?id=3070522105',
                 'tags' => ['Surf', 'Relax', 'Movement']
             ],
-            [
-                'title' => 'Bhop_Sakura',
-                'category' => 'BHOP',
-                'author' => 'Sam',
-                'image' => 'img/workshop/bhopsakura.jpeg',
-                'desc' => 'Mapa de BunnyHop estéticamente precioso con temática japonesa.',
-                'link' => 'https://steamcommunity.com/sharedfiles/filedetails/?id=3075676348',
-                'tags' => ['Bhop', 'Hard', 'Anime']
-            ],
 
             // --- UTILITY ---
             [
-                'title' => 'Mirage Instant Smokes',
+                'title' => 'Dust 2 Utility',
                 'category' => 'UTILITY',
-                'author' => 'Dolnma',
-                'image' => 'img/workshop/miragesmoke.jpeg',
+                'author' => 'Leander',
+                'image' => 'img/workshop/DustUtility.jpeg',
+                'desc' => 'Aprende todos los humos, flashes y molos de Dust sin tiempos de espera.',
+                'link' => 'https://steamcommunity.com/sharedfiles/filedetails/?id=3360435602',
+                'tags' => ['Nades', 'Tactical', 'Competitive']
+            ],
+            [
+                'title' => 'Mirage Utility',
+                'category' => 'UTILITY',
+                'author' => 'Leander',
+                'image' => 'img/workshop/MirageUtility.jpeg',
                 'desc' => 'Aprende todos los humos, flashes y molos de Mirage sin tiempos de espera.',
-                'link' => 'https://steamcommunity.com/sharedfiles/filedetails/?id=3073666943',
+                'link' => 'https://steamcommunity.com/sharedfiles/filedetails/?id=3312981414',
+                'tags' => ['Nades', 'Tactical', 'Competitive']
+            ],
+            [
+                'title' => 'Nuke Utility',
+                'category' => 'UTILITY',
+                'author' => 'Leander',
+                'image' => 'img/workshop/NukeUtility.jpeg',
+                'desc' => 'Aprende todos los humos, flashes y molos de Nuke sin tiempos de espera.',
+                'link' => 'https://steamcommunity.com/sharedfiles/filedetails/?id=3340925621',
+                'tags' => ['Nades', 'Tactical', 'Competitive']
+            ],
+            [
+                'title' => 'Inferno Utility',
+                'category' => 'UTILITY',
+                'author' => 'Leander',
+                'image' => 'img/workshop/InfernoUtility.jpeg',
+                'desc' => 'Aprende todos los humos, flashes y molos de Inferno sin tiempos de espera.',
+                'link' => 'https://steamcommunity.com/sharedfiles/filedetails/?id=3332771164',
+                'tags' => ['Nades', 'Tactical', 'Competitive']
+            ],
+            [
+                'title' => 'Ancient Utility',
+                'category' => 'UTILITY',
+                'author' => 'Leander',
+                'image' => 'img/workshop/AncientUtility.jpeg',
+                'desc' => 'Aprende todos los humos, flashes y molos de Ancient sin tiempos de espera.',
+                'link' => 'https://steamcommunity.com/sharedfiles/filedetails/?id=3351615311',
+                'tags' => ['Nades', 'Tactical', 'Competitive']
+            ],
+            [
+                'title' => 'Anubis Utility',
+                'category' => 'UTILITY',
+                'author' => 'Leander',
+                'image' => 'img/workshop/AnubisUtility.jpeg',
+                'desc' => 'Aprende todos los humos, flashes y molos de Anubis sin tiempos de espera.',
+                'link' => 'https://steamcommunity.com/sharedfiles/filedetails/?id=3368313759',
                 'tags' => ['Nades', 'Tactical', 'Competitive']
             ],
         ];
