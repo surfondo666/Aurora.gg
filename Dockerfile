@@ -22,3 +22,8 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 ENV APP_ENV=prod
 RUN composer install --no-dev --optimize-autoloader --no-scripts
 RUN chown -R www-data:www-data /var/www/html/var
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+ENV APP_ENV=prod
+RUN composer install --no-dev --optimize-autoloader --no-scripts
+
+RUN mkdir -p /var/www/html/var && chown -R www-data:www-data /var/www/html/var
