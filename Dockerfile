@@ -1,0 +1,32 @@
+FROM php:8.2-apache
+
+RUN apt-get update && apt-get install -y \
+    libpq-dev \
+    libzip-dev \
+    zip \
+    unzip \
+    git \
+    libicu-dev \
+    && docker-php-ext-configure intl \
+    && docker-php-ext-install pdo pdo_pgsql zip intl
+
+RUN a2enmod rewrite
+ENV APACHE_DOCUMENT_ROOT /var/www/html/public
+RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf
+RUN sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
+
+COPY . /var/www/html
+WORKDIR /var/www/html
+
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+ENV APP_ENV=prod
+RUN composer install --no-dev --optimize-autoloader --no-scripts
+RUN mkdir -p /var/www/html/var && \
+    mkdir -p /var/www/html/var/cache && \
+    mkdir -p /var/www/html/var/log && \
+    chown -R www-data:www-data /var/www/html/var && \
+    chmod -R 775 /var/www/html/varRUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+ENV APP_ENV=prod
+RUN composer install --no-dev --optimize-autoloader --no-scripts
+
+RUN mkdir -p /var/www/html/var && chown -R www-data:www-data /var/www/html/var
