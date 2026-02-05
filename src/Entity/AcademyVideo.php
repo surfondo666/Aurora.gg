@@ -20,9 +20,11 @@ class AcademyVideo
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $description = null;
 
-    // CAMBIO: Reemplazamos youtubeId por videoFilename
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $urlOriginal = null;
+
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $videoFilename = null;
+    private ?string $clipId = null;
 
     // NUEVO: Campo para subir una imagen de portada manual
     #[ORM\Column(length: 255, nullable: true)]
@@ -61,15 +63,25 @@ class AcademyVideo
         return $this;
     }
 
-    // Getters y Setters para el Video
-    public function getVideoFilename(): ?string
+    public function getUrlOriginal(): ?string
     {
-        return $this->videoFilename;
+        return $this->urlOriginal;
     }
 
-    public function setVideoFilename(?string $videoFilename): static
+    public function setUrlOriginal(?string $urlOriginal): static
     {
-        $this->videoFilename = $videoFilename;
+        $this->urlOriginal = $urlOriginal;
+        return $this;
+    }
+
+    public function getClipId(): ?string
+    {
+        return $this->clipId;
+    }
+
+    public function setClipId(?string $clipId): static
+    {
+        $this->clipId = $clipId;
         return $this;
     }
 

@@ -21,27 +21,12 @@ class AcademyVideoCrudController extends AbstractCrudController
     {
         return [
             IdField::new('id')->hideOnForm(),
-            
+
             TextField::new('title', 'Título'),
 
-            // CAMPO PARA SUBIR EL VIDEO
-            ImageField::new('videoFilename', 'Archivo de Video (MP4)')
-                ->setBasePath('uploads/academy/videos') 
-                ->setUploadDir('public/uploads/academy/videos') 
-                ->setUploadedFileNamePattern('[randomhash].[extension]')
-                ->setRequired(false)
-                // Validación para aceptar solo videos
-                ->setFileConstraints(new \Symfony\Component\Validator\Constraints\File([
-                    'maxSize' => '50M', 
-                    'mimeTypes' => [
-                        'video/mp4',
-                        'video/mpeg',
-                        'video/quicktime',
-                    ],
-                    'mimeTypesMessage' => 'Por favor sube un video válido (MP4)',
-                ])),
+            TextField::new('urlOriginal', 'URL de Medal.tv')
+                ->setHelp('Ejemplo: https://medal.tv/clips/64826435/vp345345'),
 
-            // CAMPO PARA SUBIR LA MINIATURA (Imagen)
             ImageField::new('thumbnailFilename', 'Miniatura (Portada)')
                 ->setBasePath('uploads/academy/thumbnails')
                 ->setUploadDir('public/uploads/academy/thumbnails')
@@ -70,5 +55,38 @@ class AcademyVideoCrudController extends AbstractCrudController
 
             TextareaField::new('description', 'Descripción'),
         ];
+    }
+
+    public function persistEntity(\Doctrine\ORM\EntityManagerInterface $entityManager, $entityInstance): void
+    {
+        $this->processVideoUrl($entityInstance);
+        parent::persistEntity($entityManager, $entityInstance);
+    }
+
+    public function updateEntity(\Doctrine\ORM\EntityManagerInterface $entityManager, $entityInstance): void
+    {
+        $this->processVideoUrl($entityInstance);
+        parent::updateEntity($entityManager, $entityInstance);
+    }
+
+    private function processVideoUrl(AcademyVideo $video): void
+    {
+        if ($video->getUrlOriginal()) {
+            $clipId = $this->extractClipId($video->getUrlOriginal());
+            if ($clipId) {
+                $video->setClipId($clipId);
+            }
+        }
+    }
+
+    private function extractClipId(string $url): ?string
+    {
+        // Lógica de transformación: https://medal.tv/clips/ID/algo -> ID
+        $parts = explode('/clips/', $url);
+        if (isset($parts[1])) {
+            $subParts = explode('/', $parts[1]);
+            return $subParts[0];
+        }
+        return null;
     }
 }
