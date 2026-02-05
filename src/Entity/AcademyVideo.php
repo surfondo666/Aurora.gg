@@ -26,9 +26,9 @@ class AcademyVideo
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $clipId = null;
 
-    // NUEVO: Campo para subir una imagen de portada manual
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $thumbnailFilename = null;
+    // NUEVO: URL para la miniatura externa
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $thumbnailUrl = null;
 
     #[ORM\Column(length: 50)]
     private ?string $type = null;
@@ -86,14 +86,14 @@ class AcademyVideo
     }
 
     // Getters y Setters para la Miniatura
-    public function getThumbnailFilename(): ?string
+    public function getThumbnailUrl(): ?string
     {
-        return $this->thumbnailFilename;
+        return $this->thumbnailUrl;
     }
 
-    public function setThumbnailFilename(?string $thumbnailFilename): static
+    public function setThumbnailUrl(?string $thumbnailUrl): static
     {
-        $this->thumbnailFilename = $thumbnailFilename;
+        $this->thumbnailUrl = $thumbnailUrl;
         return $this;
     }
 

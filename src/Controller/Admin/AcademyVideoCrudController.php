@@ -27,11 +27,8 @@ class AcademyVideoCrudController extends AbstractCrudController
             TextField::new('urlOriginal', 'URL de Medal.tv')
                 ->setHelp('Ejemplo: https://medal.tv/clips/64826435/vp345345'),
 
-            ImageField::new('thumbnailFilename', 'Miniatura (Portada)')
-                ->setBasePath('uploads/academy/thumbnails')
-                ->setUploadDir('public/uploads/academy/thumbnails')
-                ->setUploadedFileNamePattern('[randomhash].[extension]')
-                ->setRequired(false),
+            TextField::new('thumbnailUrl', 'URL Miniatura')
+                ->setHelp('URL de la imagen de portada'),
 
             ChoiceField::new('type', 'Tipo')
                 ->setChoices([
