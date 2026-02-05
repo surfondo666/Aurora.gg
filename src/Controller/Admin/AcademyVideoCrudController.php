@@ -78,10 +78,10 @@ class AcademyVideoCrudController extends AbstractCrudController
 
     private function extractClipId(string $url): ?string
     {
-        // Soporta formatos con /clips/ o /clip/ e ignora query params
-        // Captura ID y opcionalmente el hash siguiente (ej: 12345 o 12345/abcde)
-        if (preg_match('/medal\.tv\/.*(?:\/clips?\/)([a-zA-Z0-9]+(?:\/[a-zA-Z0-9-]+)?)/', $url, $matches)) {
-            return $matches[1];
+        // Regex más permisiva: Captura todo después de /clips/ o /clip/ hasta encontrar ?, & o el final
+        if (preg_match('/medal\.tv\/.*(?:\/clips?\/)([^\?&]+)/', $url, $matches)) {
+            // Eliminar slash final si existe (ej: 12345/ -> 12345)
+            return rtrim($matches[1], '/');
         }
         return null;
     }
