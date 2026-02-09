@@ -1,60 +1,71 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Guías | Academia Aurora.gg{% endblock %}
+{% block title %}Guías | Academia Aurora.gg
+{% endblock %}
 
 {% block body %}
-<div class="container mx-auto px-4 py-8">
-    
-    <div class="mb-8 border-b border-aurora-border pb-6">
-        <h1 class="text-3xl font-extrabold text-white uppercase tracking-wider mb-2">
-        <a href="{{ path('app_academy_index') }}" class="text-aurora-gold hover:text-white transition-colors" title="Volver">
-            <i class="fa-solid fa-arrow-left"></i>
-        </a>
-            <i class="fa-solid text-aurora-gold mr-3"></i> Guías Estratégicas
-        </h1>
-        <p class="text-gray-400 text-sm">Contenido en profundidad para mejorar tu macro y micro juego.</p>
-    </div>
+	<div class="container mx-auto px-4 py-8">
 
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {% for guide in guides %}
-            <article class="flex flex-col h-full bg-aurora-card border border-aurora-border rounded-xl overflow-hidden hover:border-aurora-gold transition-all duration-300 group">
-                <div class="h-48 bg-[#1b2838] relative overflow-hidden">
-                    <!-- Placeholder image generation based on category or random -->
-                    <div class="absolute inset-0 bg-gradient-to-t from-aurora-card to-transparent z-10"></div>
-                     <div class="absolute inset-0 flex items-center justify-center">
-                        <i class="fa-solid fa-chess-knight text-6xl text-gray-700 group-hover:text-aurora-gold transition-colors duration-500 transform group-hover:scale-110"></i>
-                    </div>
-                    <span class="absolute top-4 right-4 z-20 bg-aurora-gold text-black text-[10px] font-bold uppercase px-2 py-1 rounded">
-                        {{ guide.category }}
-                    </span>
-                </div>
-                
-                <div class="p-6 flex-grow flex flex-col">
-                    <div class="flex items-center gap-2 mb-3 text-xs text-gray-400">
-                        <span><i class="fa-regular fa-calendar mr-1"></i> {{ guide.createdAt|date('d M Y') }}</span>
-                        <span>&bull;</span>
-                        <span><i class="fa-regular fa-user mr-1"></i> {{ guide.author.userIdentifier }}</span>
-                    </div>
+		<div class="mb-8 border-b border-aurora-border pb-6">
+			<h1 class="text-3xl font-extrabold text-white uppercase tracking-wider mb-2">
+				<a href="{{ path('app_academy_index') }}" class="text-aurora-gold hover:text-white transition-colors" title="Volver">
+					<i class="fa-solid fa-arrow-left"></i>
+				</a>
+				<i class="fa-solid text-aurora-gold mr-3"></i>
+				Guías Estratégicas
+			</h1>
+			<p class="text-gray-400 text-sm">Contenido en profundidad para mejorar tu macro y micro juego.</p>
+		</div>
 
-                    <h2 class="text-xl font-bold text-white mb-3 group-hover:text-aurora-gold transition-colors">
-                        {{ guide.title }}
-                    </h2>
-                    
-                    <p class="text-gray-400 text-sm mb-6 line-clamp-3 flex-grow">
-                        {{ guide.content|slice(0, 150) }}...
-                    </p>
+		<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+			{% for guide in guides %}
+				<article class="flex flex-col h-full bg-aurora-card border border-aurora-border rounded-xl overflow-hidden hover:border-aurora-gold transition-all duration-300 group">
+					<div class="h-48 bg-[#1b2838] relative overflow-hidden group">
+						{% if guide.firstImage %}
+							<img src="{{ guide.firstImage }}" alt="{{ guide.title }}" class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+							<div class="absolute inset-0 bg-gradient-to-t from-aurora-card to-transparent z-10 opacity-60"></div>
+						{% else %}
+							<div class="absolute inset-0 bg-gradient-to-t from-aurora-card to-transparent z-10"></div>
+							<div class="absolute inset-0 flex items-center justify-center">
+								<i class="fa-solid fa-chess-knight text-6xl text-gray-700 group-hover:text-aurora-gold transition-colors duration-500 transform group-hover:scale-110"></i>
+							</div>
+						{% endif %}
+						<span class="absolute top-4 right-4 z-20 bg-aurora-gold text-black text-[10px] font-bold uppercase px-2 py-1 rounded">
+							{{ guide.category }}
+						</span>
+					</div>
 
-                    <a href="#" class="inline-flex items-center text-sm font-bold text-[#66c0f4] hover:text-white transition-colors uppercase tracking-wide group-hover:translate-x-1 duration-300">
-                        Leer guía <i class="fa-solid fa-arrow-right ml-2 text-xs"></i>
-                    </a>
-                </div>
-            </article>
-        {% else %}
-            <div class="col-span-full py-12 text-center">
-                <i class="fa-solid fa-pen-nib text-4xl text-gray-700 mb-4"></i>
-                <p class="text-gray-500">No hay guías publicadas aún. ¡Sé el primero en aportar!</p>
-            </div>
-        {% endfor %}
-    </div>
-</div>
+					<div class="p-6 flex-grow flex flex-col">
+						<div class="flex items-center gap-2 mb-3 text-xs text-gray-400">
+							<span>
+								<i class="fa-regular fa-calendar mr-1"></i>
+								{{ guide.createdAt|date('d M Y') }}</span>
+							<span>&bull;</span>
+							<span>
+								<i class="fa-regular fa-user mr-1"></i>
+								{{ guide.author.userIdentifier }}</span>
+						</div>
+
+						<h2 class="text-xl font-bold text-white mb-3 group-hover:text-aurora-gold transition-colors">
+							{{ guide.title }}
+						</h2>
+
+						<p class="text-gray-400 text-sm mb-6 line-clamp-3 flex-grow">
+							{{ guide.content|striptags|slice(0, 150) }}...
+						</p>
+
+						<a href="{{ path('app_academy_guide_show', {'id': guide.id}) }}" class="inline-flex items-center text-sm font-bold text-[#66c0f4] hover:text-white transition-colors uppercase tracking-wide group-hover:translate-x-1 duration-300">
+							Leer guía
+							<i class="fa-solid fa-arrow-right ml-2 text-xs"></i>
+						</a>
+					</div>
+				</article>
+			{% else %}
+				<div class="col-span-full py-12 text-center">
+					<i class="fa-solid fa-pen-nib text-4xl text-gray-700 mb-4"></i>
+					<p class="text-gray-500">No hay guías publicadas aún. ¡Sé el primero en aportar!</p>
+				</div>
+			{% endfor %}
+		</div>
+	</div>
 {% endblock %}

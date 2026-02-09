@@ -99,4 +99,12 @@ class AcademyGuide
 
         return $this;
     }
+    public function getFirstImage(): ?string
+    {
+        if (preg_match('/<img.+src=[\'"]([^\'"]+)[\'"].*>/i', $this->content, $matches)) {
+            return $matches[1];
+        }
+
+        return null;
+    }
 }

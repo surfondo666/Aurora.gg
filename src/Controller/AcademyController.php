@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\AcademyGuide;
 use App\Repository\AcademyGuideRepository;
 use App\Repository\AcademyVideoRepository;
 use App\Repository\ConsoleCommandRepository;
@@ -67,6 +68,14 @@ class AcademyController extends AbstractController
             'videos' => $videos,
             'current_map' => $map,
             'current_type' => $type,
+        ]);
+    }
+
+    #[Route('/guides/{id}', name: 'guide_show')]
+    public function show_guide(AcademyGuide $guide): Response
+    {
+        return $this->render('academy/guide_show.html.twig', [
+            'guide' => $guide,
         ]);
     }
 

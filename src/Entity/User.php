@@ -57,6 +57,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->savedPosts = new ArrayCollection();
     }
 
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
+
     public function getEmail(): ?string
     {
         return $this->email;
