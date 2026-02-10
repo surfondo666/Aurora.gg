@@ -8,9 +8,10 @@ use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
+use FOS\CKEditorBundle\Form\Type\CKEditorType;
 
 class AcademyGuideCrudController extends AbstractCrudController
 {
@@ -32,7 +33,7 @@ class AcademyGuideCrudController extends AbstractCrudController
                     'Economy' => 'economy',
                     'Utility' => 'utility',
                 ]),
-            TextEditorField::new('content', 'Contenido'),
+            TextareaField::new('content', 'Contenido')->setFormType(CKEditorType::class),
             AssociationField::new('author', 'Autor')->hideOnForm(),
             DateTimeField::new('createdAt', 'Creado')->hideOnForm(),
         ];

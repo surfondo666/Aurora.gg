@@ -87,7 +87,7 @@
 				<div class="space-y-4">
 					{% for video in recent_videos %}
 						<a href="{{ path('app_academy_videos', {'map': video.map}) }}" class="flex gap-4 p-3 rounded-lg bg-aurora-card border border-aurora-border hover:bg-[#1b2838] transition-colors">
-							<img src="{{ video.thumbnailUrl ?: 'https://placehold.co/96x64?text=Aurora' }}" class="w-24 h-16 object-cover rounded">
+							<img src="{{ asset('img/maps/' ~ video.map|lower ~ '_' ~ video.type|lower ~ '.jpg') }}" onerror="this.onerror=null;this.src='{{ asset('img/img-academy/consola3.png') }}';" alt="{{ video.map }} {{ video.type }}" class="w-24 h-16 object-cover rounded">
 							<div>
 								<h4 class="font-bold text-white text-sm line-clamp-1">{{ video.title }}</h4>
 								<span class="text-xs uppercase px-2 py-0.5 rounded bg-gray-700 text-gray-300 mt-1 inline-block">{{ video.map }}</span>
