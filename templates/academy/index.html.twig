@@ -107,7 +107,7 @@
 				</h2>
 				<div class="space-y-4">
 					{% for guide in recent_guides %}
-						<a href="#" class="block p-4 rounded-lg bg-aurora-card border border-aurora-border hover:border-aurora-gold transition-all">
+						<a href="{{ path('app_academy_guide_show', {'id': guide.id}) }}" class="block p-4 rounded-lg bg-aurora-card border border-aurora-border hover:border-aurora-gold transition-all">
 							<h4 class="font-bold text-white mb-1">{{ guide.title }}</h4>
 							<div class="flex items-center gap-2 text-xs text-gray-400">
 								<span>
