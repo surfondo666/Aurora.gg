@@ -17,7 +17,13 @@ use Symfony\Component\Routing\Annotation\Route;
 class CommunityController extends AbstractController
 {
     #[Route('/', name: 'app_community')]
-    public function index(PostRepository $postRepository, Request $request, EntityManagerInterface $em): Response
+    public function index(): Response
+    {
+        return $this->render('community/index.html.twig');
+    }
+
+    #[Route('/forum', name: 'app_community_forum')]
+    public function forum(PostRepository $postRepository, Request $request, EntityManagerInterface $em): Response
     {
         // 1. Manejo del Buscador
         $query = $request->query->get('q');
@@ -36,15 +42,16 @@ class CommunityController extends AbstractController
             $post->setAuthor($this->getUser());
             // La fecha se pone sola en el __construct, pero aseguramos
             $post->setCreatedAt(new \DateTimeImmutable());
-            if (!$post->getCategory()) $post->setCategory('General');
-            
+            if (!$post->getCategory())
+                $post->setCategory('General');
+
             $em->persist($post);
             $em->flush();
 
-            return $this->redirectToRoute('app_community');
+            return $this->redirectToRoute('app_community_forum');
         }
-  
-        return $this->render('community/index.html.twig', [
+
+        return $this->render('community/foro.html.twig', [
             'posts' => $posts,
             'postForm' => $form->createView(),
             'searchQuery' => $query
@@ -62,7 +69,7 @@ class CommunityController extends AbstractController
             $comment->setAuthor($this->getUser());
             $comment->setPost($post);
             $comment->setCreatedAt(new \DateTimeImmutable());
-            
+
             $em->persist($comment);
             $em->flush();
 
@@ -82,7 +89,8 @@ class CommunityController extends AbstractController
     {
         $user = $this->getUser();
         // Devolvemos error 403 si no hay usuario, JS lo capturará
-        if (!$user) return $this->json(['error' => 'Login required'], 403);
+        if (!$user)
+            return $this->json(['error' => 'Login required'], 403);
 
         $liked = false;
         if ($post->getLikes()->contains($user)) {
@@ -104,7 +112,8 @@ class CommunityController extends AbstractController
     public function save(Post $post, EntityManagerInterface $em): Response
     {
         $user = $this->getUser();
-        if (!$user) return $this->json(['error' => 'Login required'], 403);
+        if (!$user)
+            return $this->json(['error' => 'Login required'], 403);
 
         $saved = false;
         if ($post->getSavedBy()->contains($user)) {
@@ -125,9 +134,9 @@ class CommunityController extends AbstractController
     public function myPosts(): Response
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-        
+
         $user = $this->getUser();
-        
+
         return $this->render('community/profile.html.twig', [
             'myPosts' => $user->getPosts(),
             'savedPosts' => $user->getSavedPosts()

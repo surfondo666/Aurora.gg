@@ -1,104 +1,48 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Comunidad | Aurora.gg{% endblock %}
+{% block title %}Comunidad | Aurora.gg
+{% endblock %}
 
 {% block body %}
-<div class="bg-black min-h-screen py-8 text-gray-300">
-    <div class="container mx-auto px-4 md:px-6">
-        
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            
-            <div class="lg:col-span-2 space-y-6">
-                
-                {% if app.user %}
-                    <div class="bg-zinc-900/50 border border-white/10 p-4 rounded-xl shadow-lg backdrop-blur-sm">
-                        {{ form_start(postForm) }}
-                            <div class="flex gap-4">
-                                <div class="w-10 h-10 rounded-full bg-zinc-800 overflow-hidden shrink-0 border border-zinc-700">
-                                    <img src="https://ui-avatars.com/api/?name={{ app.user.email }}&background=000&color=d4af37" class="w-full h-full">
-                                </div>
-                                <div class="flex-grow space-y-3">
-                                    {{ form_widget(postForm.title) }}
-                                    {{ form_widget(postForm.content) }}
-                                    
-                                    <div class="flex justify-between items-center mt-2">
-                                        {{ form_widget(postForm.category) }}
-                                        <button type="submit" class="bg-aurora-gold hover:bg-yellow-400 text-black font-bold px-6 py-1.5 rounded-full transition-all text-sm shadow-[0_0_10px_rgba(255,215,0,0.2)]">
-                                            Publicar
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        {{ form_end(postForm) }}
-                    </div>
-                {% endif %}
+	<div class="bg-black min-h-screen py-8 text-gray-300">
+		<div
+			class="container mx-auto px-4 md:px-6">
 
-                {% for post in posts %}
-                <div class="bg-zinc-900/40 border border-white/5 rounded-xl overflow-hidden flex shadow-lg hover:border-white/20 transition-all group">
-                    
-                    <div class="w-14 bg-black/20 flex flex-col items-center py-4 gap-1 border-r border-white/5">
-                        <a href="{{ path('app_post_like', {id: post.id}) }}" class="js-like-btn transition-colors hover:scale-110 {{ app.user and post.likes.contains(app.user) ? 'text-aurora-gold' : 'text-gray-600 hover:text-aurora-gold' }}">
-                            <i class="fa-solid fa-arrow-up text-lg"></i>
-                        </a>
-                        
-                        <span class="js-likes-count text-sm font-bold text-white">{{ post.likes|length }}</span>
-                        
-                        <button class="text-gray-700 hover:text-blue-500 cursor-not-allowed opacity-50"><i class="fa-solid fa-arrow-down"></i></button>
-                    </div>
+			<!-- Navigation Cards -->
+			<div
+				class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+				<!-- Card 1: Forum -->
+				<a href="{{ path('app_community_forum') }}" class="relative group overflow-hidden rounded-2xl bg-gradient-to-br from-zinc-800 to-zinc-900 border border-white/10 hover:border-aurora-gold/50 transition-all shadow-lg p-6 flex flex-col justify-between h-40">
+					<div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+						<i class="fa-solid fa-comments text-6xl text-white"></i>
+					</div>
+					<div>
+						<h3 class="text-2xl font-bold text-white group-hover:text-aurora-gold transition-colors">Foro General</h3>
+						<p class="text-gray-400 text-sm mt-1">Comparte, discute y aprende con la comunidad.</p>
+					</div>
+					<div class="mt-4 flex items-center gap-2 text-aurora-gold text-sm font-bold uppercase tracking-wider">
+						<span>Entrar</span>
+						<i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
+					</div>
+				</a>
 
-                    <div class="p-5 flex-grow cursor-pointer relative" onclick="window.location='{{ path('app_post_show', {id: post.id}) }}'">
-                        <div class="flex items-center gap-2 text-xs text-gray-500 mb-2 font-mono">
-                            <span class="font-bold text-gray-300">u/{{ post.author.email|split('@')[0] }}</span>
-                            <span>•</span>
-                            <span>{{ post.createdAt|date('d M') }}</span>
-                            <span class="bg-aurora-gold/10 text-aurora-gold border border-aurora-gold/20 px-2 py-0.5 rounded text-[10px] uppercase tracking-wider ml-2">{{ post.category }}</span>
-                        </div>
+				<!-- Card 2: Higher or Lower -->
+				<a href="{{ path('app_game_higher_lower') }}" class="relative group overflow-hidden rounded-2xl bg-gradient-to-br from-indigo-900/40 to-purple-900/40 border border-white/10 hover:border-aurora-neon/50 transition-all shadow-lg p-6 flex flex-col justify-between h-40">
+					<div class="absolute inset-0 bg-cover bg-center opacity-30 group-hover:opacity-40 transition-opacity" style="background-image: url('https://cdn.akamai.steamstatic.com/apps/csgo/images/csgo_react/social/cs2_header.jpg'); mix-blend-mode: overlay;"></div>
+					<div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+						<i class="fa-solid fa-arrow-trend-up text-6xl text-white"></i>
+					</div>
+					<div class="z-10">
+						<h3 class="text-2xl font-bold text-white group-hover:text-aurora-neon transition-colors">Higher or Lower</h3>
+						<p class="text-gray-300 text-sm mt-1">¿Sabes realmente cuánto valen tus skins?</p>
+					</div>
+					<div class="z-10 mt-4 flex items-center gap-2 text-aurora-neon text-sm font-bold uppercase tracking-wider">
+						<span>Jugar Ahora</span>
+						<i class="fa-solid fa-play group-hover:scale-110 transition-transform"></i>
+					</div>
+				</a>
+			</div>
 
-                        <h3 class="text-xl font-bold text-white mb-2 group-hover:text-aurora-gold transition-colors">{{ post.title }}</h3>
-                        <p class="text-gray-400 text-sm mb-4 line-clamp-2 leading-relaxed">{{ post.content }}</p>
-
-                        <div class="flex items-center gap-4 text-gray-500 text-xs font-bold z-10 relative">
-                            <div class="flex items-center gap-2 px-2 py-1 bg-black/20 rounded">
-                                <i class="fa-regular fa-comment-alt"></i> {{ post.comments|length }} Comentarios
-                            </div>
-                            
-                            <button onclick="event.stopPropagation(); navigator.clipboard.writeText('{{ url('app_post_show', {id: post.id}) }}'); alert('Enlace copiado!')" class="flex items-center gap-2 hover:text-white hover:bg-white/10 px-2 py-1 rounded transition-colors">
-                                <i class="fa-solid fa-share"></i> Compartir
-                            </button>
-
-                            <a href="{{ path('app_post_save', {id: post.id}) }}" 
-                               onclick="event.stopPropagation();" 
-                               class="js-save-btn flex items-center gap-2 hover:bg-white/10 px-2 py-1 rounded transition-colors {{ app.user and post.savedBy.contains(app.user) ? 'text-aurora-gold' : '' }}">
-                                <i class="{{ app.user and post.savedBy.contains(app.user) ? 'fa-solid' : 'fa-regular' }} fa-bookmark"></i> Guardar
-                            </a>
-                        </div>
-                    </div>
-                </div>
-                {% else %}
-                    <div class="text-center py-20 border-2 border-dashed border-white/5 rounded-xl">
-                        <i class="fa-solid fa-ghost text-4xl text-zinc-700 mb-4"></i>
-                        <p class="text-zinc-500">No hay publicaciones aún.</p>
-                    </div>
-                {% endfor %}
-            </div>
-
-            <div class="hidden lg:block space-y-6">
-                <form action="{{ path('app_community') }}" method="get" class="relative group">
-                    <input type="text" name="q" value="{{ searchQuery }}" placeholder="Buscar posts..." class="w-full bg-zinc-900/80 border border-white/10 rounded-lg px-4 py-3 text-white focus:border-aurora-gold focus:ring-1 focus:ring-aurora-gold/50 outline-none transition-all pl-10">
-                    <i class="fa-solid fa-search absolute left-3.5 top-3.5 text-gray-500 group-focus-within:text-aurora-gold transition-colors"></i>
-                </form>
-
-                <div class="bg-zinc-900/50 border border-white/10 rounded-xl p-6 shadow-lg">
-                    <h4 class="text-white font-bold text-sm mb-4 flex items-center gap-2">
-                        <i class="fa-solid fa-user-astronaut text-aurora-gold"></i> Tu Panel
-                    </h4>
-                    <a href="{{ path('app_my_posts') }}" class="block w-full text-center bg-white/5 hover:bg-white/10 text-gray-300 hover:text-white py-2 rounded-lg text-sm border border-white/5 transition-all mb-2">
-                        Gestionar mis Publicaciones
-                    </a>
-                </div>
-            </div>
-
-        </div>
-    </div>
-</div>
+		</div>
+	</div>
 {% endblock %}
