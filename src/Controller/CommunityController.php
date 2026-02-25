@@ -22,6 +22,16 @@ class CommunityController extends AbstractController
         return $this->render('community/index.html.twig');
     }
 
+    #[Route('/stash', name: 'app_community_stash')]
+    public function stash(\App\Repository\SkinRepository $skinRepository): Response
+    {
+        $collections = $skinRepository->findAllGroupedByCollection();
+
+        return $this->render('community/stash.html.twig', [
+            'collections' => $collections
+        ]);
+    }
+
     #[Route('/forum', name: 'app_community_forum')]
     public function forum(PostRepository $postRepository, Request $request, EntityManagerInterface $em): Response
     {

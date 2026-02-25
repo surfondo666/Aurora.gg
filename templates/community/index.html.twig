@@ -18,7 +18,6 @@
 					</div>
 					<div>
 						<h3 class="text-2xl font-bold text-white group-hover:text-aurora-gold transition-colors">Foro General</h3>
-						<p class="text-gray-400 text-sm mt-1">Comparte, discute y aprende con la comunidad.</p>
 					</div>
 					<div class="mt-4 flex items-center gap-2 text-aurora-gold text-sm font-bold uppercase tracking-wider">
 						<span>Entrar</span>
@@ -34,13 +33,45 @@
 					</div>
 					<div class="z-10">
 						<h3 class="text-2xl font-bold text-white group-hover:text-aurora-neon transition-colors">Higher or Lower</h3>
-						<p class="text-gray-300 text-sm mt-1">¿Sabes realmente cuánto valen tus skins?</p>
 					</div>
 					<div class="z-10 mt-4 flex items-center gap-2 text-aurora-neon text-sm font-bold uppercase tracking-wider">
 						<span>Jugar Ahora</span>
 						<i class="fa-solid fa-play group-hover:scale-110 transition-transform"></i>
 					</div>
 				</a>
+
+				<!-- Card 3: Stash -->
+				<a href="{{ path('app_community_stash') }}" class="relative group overflow-hidden rounded-2xl bg-gradient-to-br from-orange-600/20 to-orange-900/40 border border-white/10 hover:border-orange-500/50 transition-all shadow-lg p-6 flex flex-col justify-between h-40">
+					<div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+						<i class="fa-solid fa-box-open text-6xl text-white"></i>
+					</div>
+					<div class="z-10">
+						<h3 class="text-2xl font-bold text-white group-hover:text-orange-400 transition-colors">Stash (Inventario)</h3>
+					</div>
+					<div class="z-10 mt-4 flex items-center gap-2 text-orange-400 text-sm font-bold uppercase tracking-wider">
+						<span>Ver Colecciones</span>
+						<i class="fa-solid fa-magnifying-glass group-hover:scale-110 transition-transform"></i>
+					</div>
+				</a>
+
+				<!-- Card 4: Crafts (Blocked) -->
+				<div class="relative group overflow-hidden rounded-2xl bg-zinc-900/50 border border-white/5 shadow-lg p-6 flex flex-col justify-between h-40 grayscale opacity-60 cursor-not-allowed">
+					<div class="absolute top-4 right-4 z-20">
+						<span class="bg-zinc-800 text-aurora-gold text-[10px] font-bold px-3 py-1 rounded-full border border-aurora-gold/30 shadow-lg animate-pulse uppercase tracking-widest">
+							Próximamente
+						</span>
+					</div>
+					<div class="absolute top-0 right-0 p-4 opacity-5">
+						<i class="fa-solid fa-hammer text-6xl text-white"></i>
+					</div>
+					<div class="z-10">
+						<h3 class="text-2xl font-bold text-zinc-500">Crafts (Crafteos)</h3>
+					</div>
+					<div class="z-10 mt-4 flex items-center gap-2 text-zinc-700 text-sm font-bold uppercase tracking-wider">
+						<span>Bloqueado</span>
+						<i class="fa-solid fa-lock"></i>
+					</div>
+				</div>
 			</div>
 
 		</div>

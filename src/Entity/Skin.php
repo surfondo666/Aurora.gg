@@ -31,7 +31,7 @@ class Skin
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $stattrak = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 1000)]
     private ?string $coleccion = null;
 
     #[ORM\Column(length: 255, nullable: true)]
@@ -43,7 +43,7 @@ class Skin
     #[ORM\Column]
     private ?float $price = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 1000)]
     private ?string $image = null;
 
     public function getId(): ?int

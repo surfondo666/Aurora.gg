@@ -1,0 +1,72 @@
+{
+    "collections": [
+        {
+            "id": "snakebite",
+            "name": "Snakebite Case",
+            "items": [
+                {
+                    "id": 1,
+                    "name": "M4A4 | In Living Color",
+                    "imageUrl": "https://raw.githubusercontent.com/ByMykel/counter-strike-image-tracker/main/static/panorama/images/econ/default_generated/weapon_m4a1_cu_m4a4_ancestral_light_large.png",
+                    "rarity": "Covert",
+                    "rarityColor": "#eb4b4b"
+                },
+                {
+                    "id": 2,
+                    "name": "USP-S | The Traitor",
+                    "imageUrl": "https://raw.githubusercontent.com/ByMykel/counter-strike-image-tracker/main/static/panorama/images/econ/default_generated/weapon_usp_silencer_cu_usp_traitor_large.png",
+                    "rarity": "Covert",
+                    "rarityColor": "#eb4b4b"
+                },
+                {
+                    "id": 3,
+                    "name": "AK-47 | Slate",
+                    "imageUrl": "https://raw.githubusercontent.com/ByMykel/counter-strike-image-tracker/main/static/panorama/images/econ/default_generated/weapon_ak47_gs_ak47_slate_large.png",
+                    "rarity": "Purple",
+                    "rarityColor": "#8847ff"
+                },
+                {
+                    "id": 4,
+                    "name": "Desert Eagle | Printstream",
+                    "imageUrl": "https://raw.githubusercontent.com/ByMykel/counter-strike-image-tracker/main/static/panorama/images/econ/default_generated/weapon_deagle_cu_deagle_printstream_large.png",
+                    "rarity": "Covert",
+                    "rarityColor": "#eb4b4b"
+                },
+                {
+                    "id": 5,
+                    "name": "Glock-18 | Neo-Noir",
+                    "imageUrl": "https://raw.githubusercontent.com/ByMykel/counter-strike-image-tracker/main/static/panorama/images/econ/default_generated/weapon_glock_cu_glock_neonoir_large.png",
+                    "rarity": "Covert",
+                    "rarityColor": "#eb4b4b"
+                },
+                {
+                    "id": 6,
+                    "name": "M4A1-S | Nightmare",
+                    "imageUrl": "https://raw.githubusercontent.com/ByMykel/counter-strike-image-tracker/main/static/panorama/images/econ/default_generated/weapon_m4a1_silencer_cu_m4a1s_nightmare_large.png",
+                    "rarity": "Classified",
+                    "rarityColor": "#d32ce6"
+                }
+            ]
+        },
+        {
+            "id": "broken_fang",
+            "name": "Operation Broken Fang Case",
+            "items": [
+                {
+                    "id": 7,
+                    "name": "M4A1-S | Printstream",
+                    "imageUrl": "https://raw.githubusercontent.com/ByMykel/counter-strike-image-tracker/main/static/panorama/images/econ/default_generated/weapon_m4a1_silencer_cu_m4a1s_printstream_large.png",
+                    "rarity": "Covert",
+                    "rarityColor": "#eb4b4b"
+                },
+                {
+                    "id": 8,
+                    "name": "USP-S | Ancient Levy",
+                    "imageUrl": "https://raw.githubusercontent.com/ByMykel/counter-strike-image-tracker/main/static/panorama/images/econ/default_generated/weapon_usp_silencer_hy_usp_bark_large.png",
+                    "rarity": "Restricted",
+                    "rarityColor": "#8847ff"
+                }
+            ]
+        }
+    ]
+}

@@ -448,8 +448,8 @@ class ComposerStaticInit9b626437bb7c733e962c0b3fdb3d8af9
         ),
         'League\\OAuth2\\Client\\' => 
         array (
-            0 => __DIR__ . '/..' . '/league/oauth2-google/src',
-            1 => __DIR__ . '/..' . '/league/oauth2-client/src',
+            0 => __DIR__ . '/..' . '/league/oauth2-client/src',
+            1 => __DIR__ . '/..' . '/league/oauth2-google/src',
         ),
         'KnpU\\OAuth2ClientBundle\\' => 
         array (
